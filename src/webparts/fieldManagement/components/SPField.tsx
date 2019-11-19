@@ -30,6 +30,7 @@ export default class SPField extends React.Component<SPFieldProps, {}>{
     '@odata.editLink'?: string;
     AutoIndexed?: boolean; 
     CanBeDeleted?: boolean;
+    Choices?: string[];
     ClientSideComponentId?: string;
     ClientSideComponentProperties?: string;
     ClientValidationFormula?: string;
