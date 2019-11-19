@@ -21,7 +21,8 @@ export default class FieldManagementWebPart extends BaseClientSideWebPart<IField
     const element: React.ReactElement<IFieldManagementProps > = React.createElement(
       FieldManagement,
       {
-        description: this.properties.description
+        description: this.properties.description,
+        context: this.context
       }
     );
 
