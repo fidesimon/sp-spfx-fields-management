@@ -1,9 +1,10 @@
 import * as React from 'react';
 import styles from './FieldManagement.module.scss';
 import { IFieldManagementProps } from './IFieldManagementProps';
-import { Panel } from 'office-ui-fabric-react';
+import { Panel, PanelType } from 'office-ui-fabric-react';
 import { IGroup } from './Group';
 import { GroupList } from './GroupList';
+import FieldDisplay from './FieldDisplay';
 
 import {
   SPHttpClient,
@@ -15,12 +16,13 @@ import { ISPField } from './SPField';
 export interface IFieldManagementState {
   ListOfGroups: IGroup[];
   isPanelOpened: boolean;
+  fieldToDisplay: ISPField;
 }
 
 export default class FieldManagement extends React.Component<IFieldManagementProps, IFieldManagementState> {
   constructor(props){
     super(props);
-    this.state = { ListOfGroups: [], isPanelOpened: false}
+    this.state = { ListOfGroups: [], isPanelOpened: false, fieldToDisplay: null}
   }
 
   componentWillMount(){
@@ -34,7 +36,7 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
 
   handleFieldClick = (fieldData : ISPField) => {
     console.log({fieldData});
-    this.setState({isPanelOpened: true});
+    this.setState({isPanelOpened: true, fieldToDisplay: fieldData});
   }
 
   public render(): React.ReactElement<IFieldManagementProps> {
@@ -42,7 +44,9 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
 
     return (
       <div className={ styles.fieldManagement }>
-        <Panel isOpen={this.state.isPanelOpened} onDismiss={() => this.setState({isPanelOpened: false})} />
+        <Panel isOpen={this.state.isPanelOpened} type={PanelType.medium} onDismiss={() => this.setState({isPanelOpened: false})}>
+          <FieldDisplay field={this.state.fieldToDisplay} />
+        </Panel>
         <div className={ styles.container }>
           <div className={ styles.row }>
             <div className={ styles.column }>

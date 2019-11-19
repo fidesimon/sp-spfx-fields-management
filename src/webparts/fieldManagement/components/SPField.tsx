@@ -15,7 +15,7 @@ export default class SPField extends React.Component<SPFieldProps, {}>{
       return(
         <div>
           <div style={{"paddingLeft": '20px'}} onClick={() => this.props.clickHandler(field)}>
-            {field.Title} <small>({field.StaticName})XXXXnpm </small>
+            {field.Title} <small>({field.StaticName}) </small>
           </div>
         </div>
       );
