@@ -1,5 +1,7 @@
 import * as React from 'react';
 import SPField, { ISPField } from './SPField';
+import styles from './FieldManagement.module.scss';
+import { DetailsList } from 'office-ui-fabric-react';
 
 export interface IGroup{
     Name: string;
@@ -19,8 +21,10 @@ export interface IGroup{
       const groupName = this.props.name;
       const fields = this.props.fields;
       return(
-        <div>
-          <div><h3><b><u>{groupName}</u></b></h3></div>
+        <div className={styles.container}>
+          <div className={styles.row}>
+            <div className={styles.groupHeader}>{groupName}</div>
+          </div>
           { fields.map(field => <SPField key={field.Id} field={field} clickHandler={this.props.clickHandler} />)}
         </div>
       );

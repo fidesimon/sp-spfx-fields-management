@@ -1,4 +1,5 @@
 import * as React from 'react';
+import styles from './FieldManagement.module.scss';
 
 export type SPFieldProps = {
     field: ISPField;
@@ -13,10 +14,9 @@ export default class SPField extends React.Component<SPFieldProps, {}>{
     public render(): React.ReactElement<SPFieldProps>{
       const field = this.props.field;
       return(
-        <div>
-          <div style={{"paddingLeft": '20px'}} onClick={() => this.props.clickHandler(field)}>
-            {field.Title} <small>({field.StaticName}) </small>
-          </div>
+        <div className={styles.row} onClick={() => this.props.clickHandler(field)}>
+          <div className={styles.fieldTitle}>{field.Title}</div>
+          <div className={styles.fieldType}>{field.TypeDisplayName}</div>
         </div>
       );
     }
