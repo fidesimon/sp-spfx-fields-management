@@ -387,6 +387,23 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
       return objectsByKeyValue;
     }, {});
 
+    /* This functionality is to create a new field in SharePoint.
+    private _getListData(): Promise<ISPLists> {
+      const h2 = new Headers();
+      h2.append("Accept", "application/json;odata.metadata=full");
+      h2.append("Content-type", "application/json;odata.metadata=full");
+  
+      const optUpdate1: ISPHttpClientOptions = {
+        headers: h2,
+        body: `{ "@odata.type": "#SP.Field", "Title": "Location123", "FieldTypeKind": 31, "Required": false, "EnforceUniqueValues": false, "StaticName": "Location"}`
+      };
+      return this.context.spHttpClient.post(this.context.pageContext.web.absoluteUrl + `/_api/web/fields`, SPHttpClient.configurations.v1, optUpdate1)
+        .then((response: SPHttpClientResponse) => {
+          console.log(response.json());
+          return response.json();
+        });
+    }*/
+
   protected async _retrieveColumns(): Promise<any> {
     let context = this.props.context;
     let requestUrl = context.pageContext.web.absoluteUrl + `/_api/web/fields`; //?$filter=CanBeDeleted eq true`;
