@@ -5,6 +5,7 @@ import { Panel, PanelType, DetailsList } from 'office-ui-fabric-react';
 import { IGroup } from './Group';
 import { GroupList } from './GroupList';
 import FieldDisplay from './FieldDisplay';
+import FieldCreate from './FieldCreate';
 
 import {
   SPHttpClient,
@@ -356,6 +357,9 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
 
     return (
       <div className={ styles.fieldManagement }>
+        <Panel isOpen={true} type={PanelType.medium}>
+          <FieldCreate group="ASDF" />
+        </Panel>
         <Panel isOpen={this.state.isPanelOpened} type={PanelType.medium} onDismiss={() => this.setState({isPanelOpened: false})}>
           <FieldDisplay field={this.state.fieldToDisplay} />
         </Panel>
