@@ -14,9 +14,9 @@ export default class SPField extends React.Component<SPFieldProps, {}>{
     public render(): React.ReactElement<SPFieldProps>{
       const field = this.props.field;
       return(
-        <div className={styles.row} onClick={() => this.props.clickHandler(field)}>
-          <div className={styles.fieldTitle}>{field.Title}</div>
-          <div className={styles.fieldType}>{field.TypeDisplayName}</div>
+        <div className="ms-Grid-row" onClick={() => this.props.clickHandler(field)}>
+          <div className="ms-Grid-col ms-lg6">{field.Title}</div>
+          <div className="ms-Grid-col ms-lg6">{field.TypeDisplayName}</div>
         </div>
       );
     }

@@ -4,6 +4,7 @@ import { IGroup, Group } from './Group';
 export interface GroupListProps{
     groups: IGroup[];
     clickHandler: Function;
+    addFieldHandler: Function;
   }
   
   
@@ -14,7 +15,7 @@ export interface GroupListProps{
       const groups = this.props.groups;
       return(
         <div>
-        {groups.map(group => <Group key={group.Name} name={group.Name} fields={group.Fields} clickHandler={this.props.clickHandler} />)}
+        {groups.map(group => <Group key={group.Name} name={group.Name} fields={group.Fields} addFieldHandler={this.props.addFieldHandler} clickHandler={this.props.clickHandler} />)}
         </div>
       );
     }

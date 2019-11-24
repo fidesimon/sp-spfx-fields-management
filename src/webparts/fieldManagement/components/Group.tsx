@@ -13,7 +13,8 @@ export interface IGroup{
   export type GroupProps = {
     name: string
     fields?: ISPField[],
-    clickHandler: Function
+    clickHandler: Function,
+    addFieldHandler: Function
   }
 
   export class Group extends React.Component<GroupProps, {}> {
@@ -22,8 +23,9 @@ export interface IGroup{
       const fields = this.props.fields;
       return(
         <div className={styles.container}>
-          <div className={styles.row}>
-            <div className={styles.groupHeader}>{groupName}</div>
+          <div className={styles.groupHeader}>
+            <div className={styles.groupName}>{groupName}</div>
+            <div onClick={()=>this.props.addFieldHandler(groupName)} className={styles.pullRight}>Add New Field</div>
           </div>
           { fields.map(field => <SPField key={field.Id} field={field} clickHandler={this.props.clickHandler} />)}
         </div>

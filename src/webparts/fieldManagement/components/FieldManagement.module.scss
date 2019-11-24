@@ -7,10 +7,8 @@
   }
 
   .groupHeader{
-    @include ms-Grid;
     @include ms-Grid-row;
     @include ms-lg12;
-    @include ms-fontWeight-bold;
     background-color: $ms-color-themeDark;
     @include ms-fontColor-white;
   }
@@ -20,6 +18,15 @@
     @include ms-lg6;
     @include ms-sm6;
     @include ms-md6;
+  }
+  .groupName{
+    @include ms-Grid-col;
+    @include ms-lg3;
+  }
+  .pullRight{
+    @include ms-Grid-col;
+    @include ms-lg3;
+    @include ms-lgPush5;
   }
 
   .fieldType{

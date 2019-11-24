@@ -1,8 +1,10 @@
+import { FieldTypeKindEnum } from "../FieldTypeKindEnum";
+
 export default class TextField{
 
     constructor() {
         this["@odata.type"] = "#SP.Field";
-        this.FieldTypeKind = 2;
+        this.FieldTypeKind = FieldTypeKindEnum.Text;
     }
     '@odata.type'?: string;
     DefaultValue: string;
