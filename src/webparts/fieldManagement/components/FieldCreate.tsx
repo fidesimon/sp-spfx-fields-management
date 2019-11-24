@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { Toggle } from 'office-ui-fabric-react/lib/Toggle';
-import { PrimaryButton, Button } from 'office-ui-fabric-react';
+import { PrimaryButton, Button, Dropdown, IDropdownOption } from 'office-ui-fabric-react';
 import { ISPHttpClientOptions, SPHttpClientResponse, SPHttpClient } from '@microsoft/sp-http';
 import { ISPField } from './SPField';
 import { FieldTypeKindEnum } from './FieldTypeKindEnum';
@@ -13,6 +13,7 @@ export interface FieldCreateProps {
 }
 
 export interface FieldCreateState{
+    fieldType: number,
     columnName: string,
     internalName: string,
     group: string,
@@ -26,7 +27,7 @@ export interface FieldCreateState{
 export default class FieldCreate extends React.Component<FieldCreateProps, FieldCreateState>{
     constructor(props){
         super(props);
-        this.state = { columnName: '', internalName: '', group: this.props.group, description: '', required: false, enforceUniqueValues: false, maxNoCharacters: 255, defaultValue: ''}
+        this.state = { fieldType: FieldTypeKindEnum.Note, columnName: '', internalName: '', group: this.props.group, description: '', required: false, enforceUniqueValues: false, maxNoCharacters: 255, defaultValue: ''}
     }
 
 
@@ -71,15 +72,29 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
     }
 
     render() {
+        const options: IDropdownOption[] = [
+            { key: FieldTypeKindEnum.Text, text: 'Single line of text' },
+            { key: FieldTypeKindEnum.Note, text: 'Multiple lines of text', disabled: true },
+            { key: FieldTypeKindEnum.Number, text: 'Number (1, 1.0, 100)', disabled: true },
+            { key: FieldTypeKindEnum.Choice , text: 'Choice (menu to choose from)', disabled: true },
+            { key: FieldTypeKindEnum.Currency , text: 'Currency ($, ¥, €)', disabled: true },
+            { key: FieldTypeKindEnum.DateTime , text: 'Date and Time', disabled: true },
+            { key: FieldTypeKindEnum.Lookup , text: 'Lookup (information already on this site)', disabled: true },
+            { key: FieldTypeKindEnum.Boolean , text: 'Yes/No (check box)', disabled: true },
+            { key: FieldTypeKindEnum.User , text: 'Person or Group', disabled: true },
+            { key: FieldTypeKindEnum.URL , text: 'Hyperlink or Picture', disabled: true },
+            { key: FieldTypeKindEnum.Calculated , text: 'Calculated (calculation based on other columns)', disabled: true }
+          ];
         return (
             <div>
                 <TextField label="Column Name" id="columnName" required value={this.state.columnName} onKeyUp={() => this.generateInternalName()} />
+                <Dropdown label="Field Type" options={options} defaultSelectedKey={this.state.fieldType} onChanged={(evt: any) => this.setState({fieldType: evt.key})} />
                 <TextField label="Internal Name" required value={this.state.internalName} onKeyUp={(evt) => this.setState({internalName: (evt.target as HTMLInputElement).value})} />
                 <TextField label="Group" defaultValue={this.props.group} onChanged={(evt: string) => { this.setState({ group: evt })}} />
                 <TextField label="Description" name="columnName" multiline autoAdjustHeight onChanged={(evt: string) => { this.setState({ description: evt })}} />
                 <Toggle label="Required" onChanged={(evt) => this.setState({required: evt})} />
                 <Toggle label="Enforce Unique Values?" onChanged={(evt) => this.setState({enforceUniqueValues: evt})} />
-                <TextField label="Maximum number of characters" max={255} min={0} type="number" defaultValue="255" onChanged={(evt: number) => { this.setState({ maxNoCharacters: evt })}} />
+                {this.state.fieldType == FieldTypeKindEnum.Text ? <TextField label="Maximum number of characters" max={255} min={0} type="number" defaultValue="255" onChanged={(evt: number) => { this.setState({ maxNoCharacters: evt })}} /> : null}
                 <TextField label="Default value" value={this.state.defaultValue} onChanged={(evt: string) => { this.setState({ defaultValue: evt })}} />
                 <br /><PrimaryButton text="Save" onClick={() => this.createFieldHandler()} />
                 <Button text="Cancel" />
@@ -87,20 +102,3 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
         );
     }
 }
-
-/*
-For TextField options in SharePoint:
-1. Column Name
-2. Group - existing group drop-down or new group
-3. Description
-4. Required
-5. Enforce unique values
-6. Maximum number of characters (def 255) 
-7. Default Value - text or calculated value - calculated value skipped until v2
-8. Column formatting (json) - skipped until v2
-9. Column validation: Formula and User Message.   - skipped until v2
-
-FieldTypeKind: 2
-
-
-*/
