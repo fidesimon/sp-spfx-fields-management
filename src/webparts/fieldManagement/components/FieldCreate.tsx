@@ -21,13 +21,30 @@ export interface FieldCreateState{
     required: boolean,
     enforceUniqueValues: boolean,
     maxNoCharacters: number,
-    defaultValue: string
+    defaultValue: string,
+    numberOfLinesForEditing: number,
+    allowUnlimitedLength: boolean,
+    allowRichText: boolean,
+    appendChangesToExistingText: boolean
 }
 
 export default class FieldCreate extends React.Component<FieldCreateProps, FieldCreateState>{
     constructor(props){
         super(props);
-        this.state = { fieldType: FieldTypeKindEnum.Note, columnName: '', internalName: '', group: this.props.group, description: '', required: false, enforceUniqueValues: false, maxNoCharacters: 255, defaultValue: ''}
+        this.state = { fieldType: FieldTypeKindEnum.Text, 
+            columnName: '', 
+            internalName: '', 
+            group: this.props.group, 
+            description: '', 
+            required: false, 
+            enforceUniqueValues: false, 
+            maxNoCharacters: 255, 
+            defaultValue: '',
+            numberOfLinesForEditing: 6,
+            allowUnlimitedLength: false,
+            allowRichText: true,
+            appendChangesToExistingText: false
+        }
     }
 
 
@@ -42,18 +59,41 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
     createFieldHandler(): Promise<any>{
         let context = this.props.context;
         let data = this.state;
-        let body: ISPField = {
-            "@odata.type": "#SP.FieldText",
-            Title: data.columnName,
-            StaticName: data.internalName,
-            InternalName: data.internalName,
-            FieldTypeKind: FieldTypeKindEnum.Text,
-            Required: data.required,
-            EnforceUniqueValues: data.enforceUniqueValues,
-            MaxLength: data.maxNoCharacters,
-            DefaultValue: data.defaultValue,
-            Group: data.group
+        let body: ISPField;
+        switch(this.state.fieldType){
+            case FieldTypeKindEnum.Text:
+                body = {
+                    "@odata.type": "#SP.FieldText",
+                    Title: data.columnName,
+                    StaticName: data.internalName,
+                    InternalName: data.internalName,
+                    FieldTypeKind: FieldTypeKindEnum.Text,
+                    Required: data.required,
+                    EnforceUniqueValues: data.enforceUniqueValues,
+                    MaxLength: data.maxNoCharacters,
+                    DefaultValue: data.defaultValue,
+                    Group: data.group
+                }
+            break;
+            case FieldTypeKindEnum.Note:
+                    body = {
+                        "@odata.type": "#SP.FieldMultiLineText",
+                        Title: data.columnName,
+                        StaticName: data.internalName,
+                        InternalName: data.internalName,
+                        FieldTypeKind: FieldTypeKindEnum.Note,
+                        Required: data.required,
+                        Group: data.group,
+
+                        UnlimitedLengthInDocumentLibrary: data.allowUnlimitedLength,
+                        AllowHyperlink: data.allowRichText,
+                        AppendOnly: data.appendChangesToExistingText,
+                        NumberOfLines: data.numberOfLinesForEditing,
+                        RichText: data.allowRichText
+                    }
+            break;
         }
+        
         let bodyStr = JSON.stringify(body);
         console.log(bodyStr);
         const h2 = new Headers();
@@ -74,7 +114,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
     render() {
         const options: IDropdownOption[] = [
             { key: FieldTypeKindEnum.Text, text: 'Single line of text' },
-            { key: FieldTypeKindEnum.Note, text: 'Multiple lines of text', disabled: true },
+            { key: FieldTypeKindEnum.Note, text: 'Multiple lines of text' },
             { key: FieldTypeKindEnum.Number, text: 'Number (1, 1.0, 100)', disabled: true },
             { key: FieldTypeKindEnum.Choice , text: 'Choice (menu to choose from)', disabled: true },
             { key: FieldTypeKindEnum.Currency , text: 'Currency ($, ¥, €)', disabled: true },
@@ -87,18 +127,84 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
           ];
         return (
             <div>
-                <TextField label="Column Name" id="columnName" required value={this.state.columnName} onKeyUp={() => this.generateInternalName()} />
-                <Dropdown label="Field Type" options={options} defaultSelectedKey={this.state.fieldType} onChanged={(evt: any) => this.setState({fieldType: evt.key})} />
-                <TextField label="Internal Name" required value={this.state.internalName} onKeyUp={(evt) => this.setState({internalName: (evt.target as HTMLInputElement).value})} />
-                <TextField label="Group" defaultValue={this.props.group} onChanged={(evt: string) => { this.setState({ group: evt })}} />
-                <TextField label="Description" name="columnName" multiline autoAdjustHeight onChanged={(evt: string) => { this.setState({ description: evt })}} />
-                <Toggle label="Required" onChanged={(evt) => this.setState({required: evt})} />
-                <Toggle label="Enforce Unique Values?" onChanged={(evt) => this.setState({enforceUniqueValues: evt})} />
-                {this.state.fieldType == FieldTypeKindEnum.Text ? <TextField label="Maximum number of characters" max={255} min={0} type="number" defaultValue="255" onChanged={(evt: number) => { this.setState({ maxNoCharacters: evt })}} /> : null}
-                <TextField label="Default value" value={this.state.defaultValue} onChanged={(evt: string) => { this.setState({ defaultValue: evt })}} />
-                <br /><PrimaryButton text="Save" onClick={() => this.createFieldHandler()} />
+                { 
+                    this.state.fieldType == FieldTypeKindEnum.Text ?
+                        <div>
+                        <TextField label="Column Name" id="columnName" required value={this.state.columnName} onKeyUp={() => this.generateInternalName()} />
+                        <Dropdown label="Field Type" options={options} defaultSelectedKey={this.state.fieldType} onChanged={(evt: any) => this.setState({fieldType: evt.key})} />
+                        <TextField label="Internal Name" required value={this.state.internalName} onKeyUp={(evt) => this.setState({internalName: (evt.target as HTMLInputElement).value})} />
+                        <TextField label="Group" defaultValue={this.props.group} onChanged={(evt: string) => { this.setState({ group: evt })}} />
+                        <TextField label="Description" name="columnName" multiline autoAdjustHeight onChanged={(evt: string) => { this.setState({ description: evt })}} />
+                        <Toggle label="Required" onChanged={(evt) => this.setState({required: evt})} />
+                        <Toggle label="Enforce Unique Values" onChanged={(evt) => this.setState({enforceUniqueValues: evt})} />
+                        <TextField label="Maximum number of characters" max={255} min={0} type="number" defaultValue="255" onChanged={(evt: number) => { this.setState({ maxNoCharacters: evt })}} />
+                        <TextField label="Default value" value={this.state.defaultValue} onChanged={(evt: string) => { this.setState({ defaultValue: evt })}} />
+                    </div> : null
+                }
+                {
+                    this.state.fieldType == FieldTypeKindEnum.Note ?
+                        <div>
+                            <TextField label="Column Name" id="columnName" required value={this.state.columnName} onKeyUp={() => this.generateInternalName()} />
+                            <Dropdown label="Field Type" options={options} defaultSelectedKey={this.state.fieldType} onChanged={(evt: any) => this.setState({fieldType: evt.key})} />
+                            <TextField label="Internal Name" required value={this.state.internalName} onKeyUp={(evt) => this.setState({internalName: (evt.target as HTMLInputElement).value})} />
+                            <TextField label="Group" defaultValue={this.props.group} onChanged={(evt: string) => { this.setState({ group: evt })}} />
+                            <TextField label="Description" name="columnName" multiline autoAdjustHeight onChanged={(evt: string) => { this.setState({ description: evt })}} />
+                            <Toggle label="Required" onChanged={(evt) => this.setState({required: evt})} />
+                            <Toggle label="Allow unlimited length in document libraries" onChanged={(evt) => this.setState({allowUnlimitedLength: evt})} />
+                            <TextField label="Number of lines for editing" max={255} min={0} type="number" defaultValue="6" onChanged={(evt: number) => { this.setState({ numberOfLinesForEditing: evt })}} />
+                            <Toggle label="Allow enhanced rich text" checked={this.state.allowRichText} onChanged={(evt) => this.setState({allowRichText: evt})} /> 
+                            <Toggle label="Append Changes to Existing Text" onChanged={(evt) => this.setState({appendChangesToExistingText: evt})} />
+                        </div> : null
+                }
+            <br /><PrimaryButton text="Save" onClick={() => this.createFieldHandler()} />
                 <Button text="Cancel" />
             </div>
         );
     }
 }
+
+/*
+Number:
+@odata.type: "#SP.FieldNumber"
+AutoIndexed: false
+CanBeDeleted: true
+ClientSideComponentId: "00000000-0000-0000-0000-000000000000"
+ClientSideComponentProperties: null
+ClientValidationFormula: null
+ClientValidationMessage: null
+CustomFormatter: null
+DefaultFormula: null
+DefaultValue: null
+Description: ""
+Direction: "none"
+DisplayFormat: -1
+EnforceUniqueValues: false
+EntityPropertyName: "PercentComplete"
+FieldTypeKind: 9
+Filterable: true
+FromBaseType: false
+Group: "Core Task and Issue Columns"
+Hidden: false
+Id: "d2311440-1ed6-46ea-b46d-daa643dc3886"
+IndexStatus: 0
+Indexed: false
+InternalName: "PercentComplete"
+JSLink: "clienttemplates.js"
+MaximumValue: 1
+MinimumValue: 0
+PinnedToFiltersPane: false
+ReadOnlyField: false
+Required: false
+Scope: "/sites/firstTest"
+Sealed: false
+ShowAsPercentage: true
+ShowInFiltersPane: 0
+Sortable: true
+StaticName: "PercentComplete"
+Title: "% Complete"
+TypeAsString: "Number"
+TypeDisplayName: "Number"
+TypeShortDescription: "Number (1, 1.0, 100)"
+ValidationFormula: null
+ValidationMessage: null
+*/

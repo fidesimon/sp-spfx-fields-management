@@ -28,6 +28,11 @@ export default class SPField extends React.Component<SPFieldProps, {}>{
     '@odata.type'?: string;
     '@odata.id'?: string;
     '@odata.editLink'?: string;
+    UnlimitedLengthInDocumentLibrary?: boolean;
+    AllowHyperlink?: boolean;
+    AppendOnly?: boolean;
+    NumberOfLines?: number;
+    RichText?: boolean;
     AutoIndexed?: boolean; 
     CanBeDeleted?: boolean;
     Choices?: string[];
