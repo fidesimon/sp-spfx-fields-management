@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { Toggle } from 'office-ui-fabric-react/lib/Toggle';
-import { PrimaryButton, Button, Dropdown, IDropdownOption } from 'office-ui-fabric-react';
+import { PrimaryButton, Button, Dropdown, IDropdownOption, FacepileBase } from 'office-ui-fabric-react';
 import { ISPHttpClientOptions, SPHttpClientResponse, SPHttpClient } from '@microsoft/sp-http';
 import { ISPField } from './SPField';
 import { FieldTypeKindEnum } from './FieldTypeKindEnum';
@@ -25,7 +25,11 @@ export interface FieldCreateState{
     numberOfLinesForEditing: number,
     allowUnlimitedLength: boolean,
     allowRichText: boolean,
-    appendChangesToExistingText: boolean
+    appendChangesToExistingText: boolean,
+    minValue: number,
+    maxValue: number,
+    showAsPercentage: boolean,
+    displayFormat: string
 }
 
 export default class FieldCreate extends React.Component<FieldCreateProps, FieldCreateState>{
@@ -43,7 +47,11 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
             numberOfLinesForEditing: 6,
             allowUnlimitedLength: false,
             allowRichText: true,
-            appendChangesToExistingText: false
+            appendChangesToExistingText: false,
+            minValue: null,
+            maxValue: null,
+            showAsPercentage: false,
+            displayFormat: "-1"
         }
     }
 
@@ -74,7 +82,6 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                     DefaultValue: data.defaultValue,
                     Group: data.group
                 }
-            break;
             case FieldTypeKindEnum.Note:
                     body = {
                         "@odata.type": "#SP.FieldMultiLineText",
@@ -91,7 +98,22 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                         NumberOfLines: data.numberOfLinesForEditing,
                         RichText: data.allowRichText
                     }
-            break;
+            case FieldTypeKindEnum.Number:
+                body = {
+                    "@odata.type": "#SP.FieldNumber",
+                    Title: data.columnName,
+                    StaticName: data.internalName,
+                    InternalName: data.internalName,
+                    FieldTypeKind: FieldTypeKindEnum.Number,
+                    Required: data.required,
+                    EnforceUniqueValues: data.enforceUniqueValues,
+                    DefaultValue: data.defaultValue,
+                    Group: data.group,
+                    DisplayFormat: "2",
+                    MaximumValue: data.maxValue == null ? 1.7976931348623157e+308 : data.maxValue,
+                    MinimumValue: data.minValue == null ? -1.7976931348623157e+308 : data.minValue,
+                    ShowAsPercentage: data.showAsPercentage,
+                }
         }
         
         let bodyStr = JSON.stringify(body);
@@ -115,7 +137,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
         const options: IDropdownOption[] = [
             { key: FieldTypeKindEnum.Text, text: 'Single line of text' },
             { key: FieldTypeKindEnum.Note, text: 'Multiple lines of text' },
-            { key: FieldTypeKindEnum.Number, text: 'Number (1, 1.0, 100)', disabled: true },
+            { key: FieldTypeKindEnum.Number, text: 'Number (1, 1.0, 100)' },
             { key: FieldTypeKindEnum.Choice , text: 'Choice (menu to choose from)', disabled: true },
             { key: FieldTypeKindEnum.Currency , text: 'Currency ($, ¥, €)', disabled: true },
             { key: FieldTypeKindEnum.DateTime , text: 'Date and Time', disabled: true },
@@ -124,6 +146,15 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
             { key: FieldTypeKindEnum.User , text: 'Person or Group', disabled: true },
             { key: FieldTypeKindEnum.URL , text: 'Hyperlink or Picture', disabled: true },
             { key: FieldTypeKindEnum.Calculated , text: 'Calculated (calculation based on other columns)', disabled: true }
+          ];
+          const optionsDisplayFormat: IDropdownOption[] = [
+            { key: '-1', text: 'Automatic' },
+            { key: '0', text: '0' },
+            { key: '1', text: '1' },
+            { key: '2', text: '2' },
+            { key: '3', text: '3' },
+            { key: '4', text: '4' },
+            { key: '5', text: '5' }
           ];
         return (
             <div>
@@ -156,55 +187,30 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                             <Toggle label="Append Changes to Existing Text" onChanged={(evt) => this.setState({appendChangesToExistingText: evt})} />
                         </div> : null
                 }
+                {
+                    this.state.fieldType == FieldTypeKindEnum.Number ?
+                        <div>
+                            <TextField label="Column Name" id="columnName" required value={this.state.columnName} onKeyUp={() => this.generateInternalName()} />
+                            <Dropdown label="Field Type" options={options} defaultSelectedKey={this.state.fieldType} onChanged={(evt: any) => this.setState({fieldType: evt.key})} />
+                            <TextField label="Internal Name" required value={this.state.internalName} onKeyUp={(evt) => this.setState({internalName: (evt.target as HTMLInputElement).value})} />
+                            <TextField label="Group" defaultValue={this.props.group} onChanged={(evt: string) => { this.setState({ group: evt })}} />
+                            <TextField label="Description" name="columnName" multiline autoAdjustHeight onChanged={(evt: string) => { this.setState({ description: evt })}} />
+                            <Toggle label="Required" onChanged={(evt) => this.setState({required: evt})} />
+                            <Toggle label="Enforce Unique Values" onChanged={(evt) => this.setState({enforceUniqueValues: evt})} />
+                            <TextField label="Minimum allowed value" type="number" onChanged={(evt: number) => { this.setState({ minValue: evt })}} />
+                            <TextField label="Maximum allowed value" type="number" onChanged={(evt: number) => { this.setState({ maxValue: evt })}} />
+                            <Dropdown label="Number of decimal places" options={optionsDisplayFormat} defaultSelectedKey={this.state.displayFormat} onChanged={(evt: any) => {
+                                console.log({evt});
+                                this.setState({displayFormat: evt.key})}
+                                
+                            }/>                        
+                            <TextField label="Default value" type="number" value={this.state.defaultValue} onChanged={(evt: number) => { this.setState({ defaultValue: evt.toString() })}} />
+                            <Toggle label="Show as percentage (for example, 50%)" onChanged={(evt) => this.setState({showAsPercentage: evt})} />
+                        </div> : null
+                }
             <br /><PrimaryButton text="Save" onClick={() => this.createFieldHandler()} />
                 <Button text="Cancel" />
             </div>
         );
     }
 }
-
-/*
-Number:
-@odata.type: "#SP.FieldNumber"
-AutoIndexed: false
-CanBeDeleted: true
-ClientSideComponentId: "00000000-0000-0000-0000-000000000000"
-ClientSideComponentProperties: null
-ClientValidationFormula: null
-ClientValidationMessage: null
-CustomFormatter: null
-DefaultFormula: null
-DefaultValue: null
-Description: ""
-Direction: "none"
-DisplayFormat: -1
-EnforceUniqueValues: false
-EntityPropertyName: "PercentComplete"
-FieldTypeKind: 9
-Filterable: true
-FromBaseType: false
-Group: "Core Task and Issue Columns"
-Hidden: false
-Id: "d2311440-1ed6-46ea-b46d-daa643dc3886"
-IndexStatus: 0
-Indexed: false
-InternalName: "PercentComplete"
-JSLink: "clienttemplates.js"
-MaximumValue: 1
-MinimumValue: 0
-PinnedToFiltersPane: false
-ReadOnlyField: false
-Required: false
-Scope: "/sites/firstTest"
-Sealed: false
-ShowAsPercentage: true
-ShowInFiltersPane: 0
-Sortable: true
-StaticName: "PercentComplete"
-Title: "% Complete"
-TypeAsString: "Number"
-TypeDisplayName: "Number"
-TypeShortDescription: "Number (1, 1.0, 100)"
-ValidationFormula: null
-ValidationMessage: null
-*/
