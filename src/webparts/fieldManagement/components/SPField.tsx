@@ -73,7 +73,7 @@ export default class SPField extends React.Component<SPFieldProps, {}>{
     TypeShortDescription?: string;
     ValidationFormula?: string;
     ValidationMessage?: string;
-    DisplayFormat?: string;
+    DisplayFormat?: number;
     MaximumValue?: number;
     MinimumValue?: number;
     ShowAsPercentage?: boolean;

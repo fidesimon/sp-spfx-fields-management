@@ -29,7 +29,7 @@ export interface FieldCreateState{
     minValue: number,
     maxValue: number,
     showAsPercentage: boolean,
-    displayFormat: string
+    displayFormat: number
 }
 
 export default class FieldCreate extends React.Component<FieldCreateProps, FieldCreateState>{
@@ -51,7 +51,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
             minValue: null,
             maxValue: null,
             showAsPercentage: false,
-            displayFormat: "-1"
+            displayFormat: 0
         }
     }
 
@@ -99,6 +99,8 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                         RichText: data.allowRichText
                     }
             case FieldTypeKindEnum.Number:
+                let minString = data.minValue == null ? '' : 'Min="' + data.minValue + '"';
+                let maxString = data.maxValue == null ? '' : 'Max="' + data.maxValue + '"';
                 body = {
                     "@odata.type": "#SP.FieldNumber",
                     Title: data.columnName,
@@ -109,10 +111,9 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                     EnforceUniqueValues: data.enforceUniqueValues,
                     DefaultValue: data.defaultValue,
                     Group: data.group,
-                    DisplayFormat: "2",
-                    MaximumValue: data.maxValue == null ? 1.7976931348623157e+308 : data.maxValue,
-                    MinimumValue: data.minValue == null ? -1.7976931348623157e+308 : data.minValue,
+                    DisplayFormat: +(data.displayFormat),
                     ShowAsPercentage: data.showAsPercentage,
+                    SchemaXml: '<Field Type="Number" DisplayName="'+ data.columnName + '" Default="'+ data.defaultValue +'" Required="'+ (data.required? "TRUE" : "FALSE") +'" Percentage="'+ (data.showAsPercentage? "TRUE" : "FALSE") +'" EnforceUniqueValues="'+ (data.enforceUniqueValues? "TRUE" : "FALSE") +'" Decimals="'+data.displayFormat+'" Group="'+data.group+'" StaticName="'+data.internalName+'" Name="'+data.internalName+'" Version="1" '+ minString + ' ' + maxString + '></Field>'
                 }
         }
         
@@ -197,14 +198,18 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                             <TextField label="Description" name="columnName" multiline autoAdjustHeight onChanged={(evt: string) => { this.setState({ description: evt })}} />
                             <Toggle label="Required" onChanged={(evt) => this.setState({required: evt})} />
                             <Toggle label="Enforce Unique Values" onChanged={(evt) => this.setState({enforceUniqueValues: evt})} />
-                            <TextField label="Minimum allowed value" type="number" onChanged={(evt: number) => { this.setState({ minValue: evt })}} />
-                            <TextField label="Maximum allowed value" type="number" onChanged={(evt: number) => { this.setState({ maxValue: evt })}} />
-                            <Dropdown label="Number of decimal places" options={optionsDisplayFormat} defaultSelectedKey={this.state.displayFormat} onChanged={(evt: any) => {
-                                console.log({evt});
-                                this.setState({displayFormat: evt.key})}
-                                
+                            <TextField label="Minimum allowed value" type="number" onChanged={(evt: number) => { 
+                                this.setState({ minValue: (evt.toString().length == 0) ? null : evt })}
+                                } />
+                            <TextField label="Maximum allowed value" type="number" onChanged={(evt: number) => { 
+                                this.setState({ maxValue: (evt.toString().length == 0) ? null : evt })}
+                                } />
+                            <Dropdown label="Number of decimal places" options={optionsDisplayFormat} defaultSelectedKey="-1" onChanged={(evt: any) => {
+                                this.setState({displayFormat: +(evt.key)})}
                             }/>                        
-                            <TextField label="Default value" type="number" value={this.state.defaultValue} onChanged={(evt: number) => { this.setState({ defaultValue: evt.toString() })}} />
+                            <TextField label="Default value" type="number" value={this.state.defaultValue} onChanged={(evt: number) => { 
+                                this.setState({ defaultValue: evt.toString() })}
+                                } />
                             <Toggle label="Show as percentage (for example, 50%)" onChanged={(evt) => this.setState({showAsPercentage: evt})} />
                         </div> : null
                 }
