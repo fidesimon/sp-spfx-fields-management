@@ -99,8 +99,8 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                         RichText: data.allowRichText
                     }
             case FieldTypeKindEnum.Number:
-                let minString = data.minValue == null ? '' : 'Min="' + data.minValue + '"';
-                let maxString = data.maxValue == null ? '' : 'Max="' + data.maxValue + '"';
+                let minString = data.minValue == null ? '' : 'Min="' + data.minValue/100 + '"';
+                let maxString = data.maxValue == null ? '' : 'Max="' + data.maxValue/100 + '"';
                 body = {
                     "@odata.type": "#SP.FieldNumber",
                     Title: data.columnName,
