@@ -82,6 +82,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                     MaxLength: data.maxNoCharacters,
                     DefaultValue: data.defaultValue,
                     Group: data.group,
+                    Description: data.description,
                     SchemaXml: '<Field Type="Text" DisplayName="'+ data.columnName + '" Required="'+ (data.required? "TRUE" : "FALSE") +'" EnforceUniqueValues="'+ (data.enforceUniqueValues? "TRUE" : "FALSE") +'" Group="'+data.group+'" StaticName="'+data.internalName+'" Name="'+data.internalName+'">'+ defaultValueString +'</Field>'
                 }
                 break;
@@ -94,6 +95,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                     FieldTypeKind: FieldTypeKindEnum.Note,
                     Required: data.required,
                     Group: data.group,
+                    Description: data.description,
 
                     UnlimitedLengthInDocumentLibrary: data.allowUnlimitedLength,
                     AllowHyperlink: data.allowRichText,
@@ -118,7 +120,8 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                     Group: data.group,
                     DisplayFormat: +(data.displayFormat),
                     ShowAsPercentage: data.showAsPercentage,
-                    SchemaXml: '<Field Type="Number" DisplayName="'+ data.columnName + '" Required="'+ (data.required? "TRUE" : "FALSE") +'" Percentage="'+ (data.showAsPercentage? "TRUE" : "FALSE") +'" EnforceUniqueValues="'+ (data.enforceUniqueValues? "TRUE" : "FALSE") +'" Decimals="'+data.displayFormat+'" Group="'+data.group+'" StaticName="'+data.internalName+'" Name="'+data.internalName+'" Version="1" '+ minString + ' ' + maxString + '>'+ defaultString +'</Field>'
+                    Description: data.description,
+                    SchemaXml: '<Field Type="Number" DisplayName="'+ data.columnName + '" Description="'+data.description+'" Required="'+ (data.required? "TRUE" : "FALSE") +'" Percentage="'+ (data.showAsPercentage? "TRUE" : "FALSE") +'" EnforceUniqueValues="'+ (data.enforceUniqueValues? "TRUE" : "FALSE") +'" Decimals="'+data.displayFormat+'" Group="'+data.group+'" StaticName="'+data.internalName+'" Name="'+data.internalName+'" Version="1" '+ minString + ' ' + maxString + '>'+ defaultString +'</Field>'
                 }
                 break;
         }
