@@ -70,6 +70,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
         let body: ISPField;
         switch(this.state.fieldType){
             case FieldTypeKindEnum.Text:
+                let defaultValueString = data.defaultValue.length == 0 ? '' : "<Default>" + data.defaultValue + "</Default>";
                 body = {
                     "@odata.type": "#SP.FieldText",
                     Title: data.columnName,
@@ -80,24 +81,27 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                     EnforceUniqueValues: data.enforceUniqueValues,
                     MaxLength: data.maxNoCharacters,
                     DefaultValue: data.defaultValue,
-                    Group: data.group
+                    Group: data.group,
+                    SchemaXml: '<Field Type="Text" DisplayName="'+ data.columnName + '" Required="'+ (data.required? "TRUE" : "FALSE") +'" EnforceUniqueValues="'+ (data.enforceUniqueValues? "TRUE" : "FALSE") +'" Group="'+data.group+'" StaticName="'+data.internalName+'" Name="'+data.internalName+'">'+ defaultValueString +'</Field>'
                 }
+                break;
             case FieldTypeKindEnum.Note:
-                    body = {
-                        "@odata.type": "#SP.FieldMultiLineText",
-                        Title: data.columnName,
-                        StaticName: data.internalName,
-                        InternalName: data.internalName,
-                        FieldTypeKind: FieldTypeKindEnum.Note,
-                        Required: data.required,
-                        Group: data.group,
+                body = {
+                    "@odata.type": "#SP.FieldMultiLineText",
+                    Title: data.columnName,
+                    StaticName: data.internalName,
+                    InternalName: data.internalName,
+                    FieldTypeKind: FieldTypeKindEnum.Note,
+                    Required: data.required,
+                    Group: data.group,
 
-                        UnlimitedLengthInDocumentLibrary: data.allowUnlimitedLength,
-                        AllowHyperlink: data.allowRichText,
-                        AppendOnly: data.appendChangesToExistingText,
-                        NumberOfLines: data.numberOfLinesForEditing,
-                        RichText: data.allowRichText
-                    }
+                    UnlimitedLengthInDocumentLibrary: data.allowUnlimitedLength,
+                    AllowHyperlink: data.allowRichText,
+                    AppendOnly: data.appendChangesToExistingText,
+                    NumberOfLines: data.numberOfLinesForEditing,
+                    RichText: data.allowRichText
+                }
+                break;
             case FieldTypeKindEnum.Number:
                 let minString = data.minValue == null ? '' : (data.showAsPercentage ? 'Min="' + data.minValue/100 + '"' : 'Min="' + data.minValue + '"');
                 let maxString = data.maxValue == null ? '' : (data.showAsPercentage ? 'Max="' + data.maxValue/100 + '"' : 'Max="' + data.maxValue + '"');
@@ -116,6 +120,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                     ShowAsPercentage: data.showAsPercentage,
                     SchemaXml: '<Field Type="Number" DisplayName="'+ data.columnName + '" Required="'+ (data.required? "TRUE" : "FALSE") +'" Percentage="'+ (data.showAsPercentage? "TRUE" : "FALSE") +'" EnforceUniqueValues="'+ (data.enforceUniqueValues? "TRUE" : "FALSE") +'" Decimals="'+data.displayFormat+'" Group="'+data.group+'" StaticName="'+data.internalName+'" Name="'+data.internalName+'" Version="1" '+ minString + ' ' + maxString + '>'+ defaultString +'</Field>'
                 }
+                break;
         }
         
         let bodyStr = JSON.stringify(body);
