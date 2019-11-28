@@ -22,9 +22,7 @@ export default class SPField extends React.Component<SPFieldProps, {}>{
     }
   }
   
-
-  
-  export type ISPField = {
+  export interface ISPField {
     '@odata.type'?: string;
     '@odata.id'?: string;
     '@odata.editLink'?: string;

@@ -51,7 +51,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
             minValue: null,
             maxValue: null,
             showAsPercentage: false,
-            displayFormat: 0
+            displayFormat: -1
         }
     }
 
@@ -99,8 +99,9 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                         RichText: data.allowRichText
                     }
             case FieldTypeKindEnum.Number:
-                let minString = data.minValue == null ? '' : 'Min="' + data.minValue/100 + '"';
-                let maxString = data.maxValue == null ? '' : 'Max="' + data.maxValue/100 + '"';
+                let minString = data.minValue == null ? '' : (data.showAsPercentage ? 'Min="' + data.minValue/100 + '"' : 'Min="' + data.minValue + '"');
+                let maxString = data.maxValue == null ? '' : (data.showAsPercentage ? 'Max="' + data.maxValue/100 + '"' : 'Max="' + data.maxValue + '"');
+                let defaultString = data.defaultValue.length == 0 ? '' : "<Default>" + (data.showAsPercentage ? (+(data.defaultValue)/100).toString() : data.defaultValue) + "</Default>";
                 body = {
                     "@odata.type": "#SP.FieldNumber",
                     Title: data.columnName,
@@ -113,7 +114,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                     Group: data.group,
                     DisplayFormat: +(data.displayFormat),
                     ShowAsPercentage: data.showAsPercentage,
-                    SchemaXml: '<Field Type="Number" DisplayName="'+ data.columnName + '" Default="'+ data.defaultValue +'" Required="'+ (data.required? "TRUE" : "FALSE") +'" Percentage="'+ (data.showAsPercentage? "TRUE" : "FALSE") +'" EnforceUniqueValues="'+ (data.enforceUniqueValues? "TRUE" : "FALSE") +'" Decimals="'+data.displayFormat+'" Group="'+data.group+'" StaticName="'+data.internalName+'" Name="'+data.internalName+'" Version="1" '+ minString + ' ' + maxString + '></Field>'
+                    SchemaXml: '<Field Type="Number" DisplayName="'+ data.columnName + '" Required="'+ (data.required? "TRUE" : "FALSE") +'" Percentage="'+ (data.showAsPercentage? "TRUE" : "FALSE") +'" EnforceUniqueValues="'+ (data.enforceUniqueValues? "TRUE" : "FALSE") +'" Decimals="'+data.displayFormat+'" Group="'+data.group+'" StaticName="'+data.internalName+'" Name="'+data.internalName+'" Version="1" '+ minString + ' ' + maxString + '>'+ defaultString +'</Field>'
                 }
         }
         
@@ -134,6 +135,11 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
         });
     }
 
+    // Comment for rendering part: There are components with the following logic:
+    // (evt.toString().length == 0) ? null : evt
+    // where evt is number. Through the code when entered value is removed (backspace)
+    // the evt value would be assigned evt = "", but because it's not a number it cannot be checked otherwise
+    // whether the value is (null or empty) or contains a value. hence the converting.
     render() {
         const options: IDropdownOption[] = [
             { key: FieldTypeKindEnum.Text, text: 'Single line of text' },
@@ -149,13 +155,13 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
             { key: FieldTypeKindEnum.Calculated , text: 'Calculated (calculation based on other columns)', disabled: true }
           ];
           const optionsDisplayFormat: IDropdownOption[] = [
-            { key: '-1', text: 'Automatic' },
-            { key: '0', text: '0' },
-            { key: '1', text: '1' },
-            { key: '2', text: '2' },
-            { key: '3', text: '3' },
-            { key: '4', text: '4' },
-            { key: '5', text: '5' }
+            { key: -1, text: 'Automatic' },
+            { key: 0, text: '0' },
+            { key: 1, text: '1' },
+            { key: 2, text: '2' },
+            { key: 3, text: '3' },
+            { key: 4, text: '4' },
+            { key: 5, text: '5' }
           ];
         return (
             <div>
@@ -204,10 +210,10 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                             <TextField label="Maximum allowed value" type="number" onChanged={(evt: number) => { 
                                 this.setState({ maxValue: (evt.toString().length == 0) ? null : evt })}
                                 } />
-                            <Dropdown label="Number of decimal places" options={optionsDisplayFormat} defaultSelectedKey="-1" onChanged={(evt: any) => {
+                            <Dropdown label="Number of decimal places" options={optionsDisplayFormat} defaultSelectedKey={this.state.displayFormat} onChanged={(evt: IDropdownOption) => {
                                 this.setState({displayFormat: +(evt.key)})}
                             }/>                        
-                            <TextField label="Default value" type="number" value={this.state.defaultValue} onChanged={(evt: number) => { 
+                            <TextField label="Default value" type="number" onChanged={(evt: number) => { 
                                 this.setState({ defaultValue: evt.toString() })}
                                 } />
                             <Toggle label="Show as percentage (for example, 50%)" onChanged={(evt) => this.setState({showAsPercentage: evt})} />
