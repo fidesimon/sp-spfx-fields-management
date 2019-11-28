@@ -83,7 +83,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                     DefaultValue: data.defaultValue,
                     Group: data.group,
                     Description: data.description,
-                    SchemaXml: '<Field Type="Text" DisplayName="'+ data.columnName + '" Required="'+ (data.required? "TRUE" : "FALSE") +'" EnforceUniqueValues="'+ (data.enforceUniqueValues? "TRUE" : "FALSE") +'" Group="'+data.group+'" StaticName="'+data.internalName+'" Name="'+data.internalName+'">'+ defaultValueString +'</Field>'
+                    SchemaXml: '<Field Type="Text" Description="'+data.description+'" DisplayName="'+ data.columnName + '" Required="'+ (data.required? "TRUE" : "FALSE") +'" EnforceUniqueValues="'+ (data.enforceUniqueValues? "TRUE" : "FALSE") +'" Group="'+data.group+'" StaticName="'+data.internalName+'" Name="'+data.internalName+'">'+ defaultValueString +'</Field>'
                 }
                 break;
             case FieldTypeKindEnum.Note:
