@@ -18,7 +18,8 @@ export interface IGroup{
     clickHandler: Function,
     addFieldHandler: Function,
     sortHandler: Function,
-    fieldsAscending: boolean
+    fieldsAscending: boolean,
+    deleteField: Function
   }
 
   export class Group extends React.Component<GroupProps, {}> {
@@ -42,7 +43,7 @@ export interface IGroup{
             
             <div onClick={()=>this.props.addFieldHandler(groupName)} className={styles.pullRight}>Add New Field</div>
           </div>
-          { fields.map(field => <SPField key={field.Id} field={field} clickHandler={this.props.clickHandler} />)}
+          { fields.map(field => <SPField key={field.Id} field={field} clickHandler={this.props.clickHandler} deleteField={this.props.deleteField} />)}
         </div>
       );
     }

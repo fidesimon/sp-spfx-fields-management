@@ -5,6 +5,7 @@ import styles from './FieldManagement.module.scss';
 export type SPFieldProps = {
     field: ISPField;
     clickHandler: Function;
+    deleteField: Function;
   }
 
 export default class SPField extends React.Component<SPFieldProps, {}>{
@@ -21,7 +22,10 @@ export default class SPField extends React.Component<SPFieldProps, {}>{
           <div className="ms-Grid-col ms-lg1">
             {
               this.props.field.CanBeDeleted ?
-              <Icon iconName="Delete" style={{color: '#ff0000'}} />
+              <Icon iconName="Delete" style={{color: '#ff0000'}} onClick={(ev) => {
+                ev.stopPropagation();
+                this.props.deleteField(this.props.field.Id)} 
+              } />
               :
               <Icon iconName="Delete" style={{color: '#d8d8d8'}} />
             }

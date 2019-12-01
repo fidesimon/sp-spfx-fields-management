@@ -270,6 +270,10 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
     this.setState({ListOfGroups: currentItems});
   }
 
+  deleteField = (id) =>{
+    console.log('delete field ', id);
+  }
+
   public render(): React.ReactElement<IFieldManagementProps> {
     let {groups, items} = this.state.fieldsPlain;///this.magicWithGroups(this.mockData);
 
@@ -287,7 +291,14 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
             <div className={styles.fieldTitle}>Field Title</div>
             <div className={styles.fieldType}>Field Type</div>
           </div>
-          {this.state.ListOfGroups.map(group => <Group key={group.Name} name={group.Name} fields={group.Fields} fieldsAscending={group.Ascending} sortHandler={this.sortGroupFields} addFieldHandler={this.addFieldHandler} clickHandler={this.handleFieldClick} />)}
+          {this.state.ListOfGroups.map(group => <Group key={group.Name} 
+                                                        name={group.Name} 
+                                                        fields={group.Fields} 
+                                                        fieldsAscending={group.Ascending} 
+                                                        sortHandler={this.sortGroupFields} 
+                                                        deleteField={this.deleteField} 
+                                                        addFieldHandler={this.addFieldHandler} 
+                                                        clickHandler={this.handleFieldClick} />)}
         </div>
       </div>
     );
