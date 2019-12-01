@@ -149,9 +149,9 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
             body: bodyStr
         };
         let response = await context.spHttpClient.post(context.pageContext.web.absoluteUrl + `/_api/web/fields`, SPHttpClient.configurations.v1, optUpdate1);
-        //let jsonResponse = await response.json();
+        let jsonResponse = await response.json();
         if(response.status == 201){
-            this.props.onItemSaved();
+            this.props.onItemSaved(jsonResponse);
         }
     }
 

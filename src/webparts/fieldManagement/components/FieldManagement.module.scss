@@ -21,12 +21,18 @@
   }
   .groupName{
     @include ms-Grid-col;
-    @include ms-lg3;
+    @include ms-lg9;
+  }
+  .sort{
+    @include ms-Grid-col;
+  }
+  .sortingIcon{
+    cursor: pointer;
+    padding-right: 10px;
   }
   .pullRight{
     @include ms-Grid-col;
     @include ms-lg3;
-    @include ms-lgPush5;
   }
 
   .fieldType{

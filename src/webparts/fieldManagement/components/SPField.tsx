@@ -14,7 +14,7 @@ export default class SPField extends React.Component<SPFieldProps, {}>{
     public render(): React.ReactElement<SPFieldProps>{
       const field = this.props.field;
       return(
-        <div className="ms-Grid-row" onClick={() => this.props.clickHandler(field)}>
+        <div className="ms-Grid-row" onClick={() => this.props.clickHandler(field)} style={{backgroundColor: this.props.field.JustAdded ? 'limegreen' : 'white'}}>
           <div className="ms-Grid-col ms-lg6">{field.Title}</div>
           <div className="ms-Grid-col ms-lg6">{field.TypeDisplayName}</div>
         </div>
@@ -23,6 +23,7 @@ export default class SPField extends React.Component<SPFieldProps, {}>{
   }
   
   export interface ISPField {
+    JustAdded?: boolean;
     '@odata.type'?: string;
     '@odata.id'?: string;
     '@odata.editLink'?: string;

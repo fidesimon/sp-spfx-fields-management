@@ -62,7 +62,7 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
   }
   
   mockData : Array<IGroup> = [
-    { Name: "AAA", Fields: [{AutoIndexed: false,
+    { Name: "AAA", Ascending: true, Fields: [{AutoIndexed: false,
       CanBeDeleted: true,
       ClientSideComponentId: "00000000-0000-0000-0000-000000000000",
       ClientSideComponentProperties: null,
@@ -140,7 +140,7 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
         TypeShortDescription: "Multiple lines of text",
         ValidationFormula: null,
         ValidationMessage: null}] },
-      { Name: "BBB", Fields: [{AutoIndexed: false,
+      { Name: "BBB", Ascending: true, Fields: [{AutoIndexed: false,
         CanBeDeleted: false,
         ClientSideComponentId: "00000000-0000-0000-0000-000000000000",
         ClientSideComponentProperties: null,
@@ -178,7 +178,7 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
         TypeShortDescription: "Integer",
         ValidationFormula: null,
         ValidationMessage: null}]},
-      { Name: "CCC", Fields: [{AutoIndexed: false,
+      { Name: "CCC", Ascending: true, Fields: [{AutoIndexed: false,
         CanBeDeleted: true,
         Choices: ["Lorem", "Ipsum", "Sit", "Mit", "Dolor"],
         ClientSideComponentId: "00000000-0000-0000-0000-000000000000",
@@ -233,8 +233,39 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
     this.setState({isCreateFieldPanelOpen: true, createFieldGroupName: groupName});
   }
   
-  closeFieldCreatePanel = () => {
-    this.setState({isCreateFieldPanelOpen: false});
+  closeFieldCreatePanel = (fieldData) => {
+    let currentItems = this.state.ListOfGroups;
+    fieldData.JustAdded = true;
+    currentItems.forEach((item)=>{
+      if(item.Name == fieldData.Group){
+        item.Fields.push(fieldData as ISPField);
+      }
+    });
+    this.setState({isCreateFieldPanelOpen: false, ListOfGroups: currentItems});
+  }
+
+  sortGroupFields = (groupName, ascending: boolean) => {
+    function compare(a, b) {
+      // Use toUpperCase() to ignore character casing
+      const bandA = a.Title.toUpperCase();
+      const bandB = b.Title.toUpperCase();
+    
+      let comparison = 0;
+      if (bandA > bandB) {
+        comparison = ascending ? 1 : -1;
+      } else if (bandA < bandB) {
+        comparison = ascending ? -1 : 1;
+      }
+      return comparison;
+    }
+    let currentItems = this.state.ListOfGroups;
+    currentItems.forEach((item)=>{
+      if(item.Name == groupName){
+        item.Fields.sort(compare);
+        item.Ascending = ascending;
+      }
+    });
+    this.setState({ListOfGroups: currentItems});
   }
 
   public render(): React.ReactElement<IFieldManagementProps> {
@@ -242,7 +273,7 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
 
     return (
       <div className={styles.fieldManagement}>
-        <Panel headerText="Create new site column" isOpen={this.state.isCreateFieldPanelOpen} type={PanelType.medium} onDismiss={() => this.closeFieldCreatePanel()}>
+        <Panel headerText="Create new site column" isOpen={this.state.isCreateFieldPanelOpen} type={PanelType.medium} onDismiss={() => this.setState({isCreateFieldPanelOpen: false})}>
           <FieldCreate context={this.props.context} group={this.state.createFieldGroupName} onItemSaved={this.closeFieldCreatePanel} />
         </Panel>
         <Panel isOpen={this.state.isPanelOpened} type={PanelType.medium} onDismiss={() => this.setState({isPanelOpened: false})}>
@@ -254,7 +285,7 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
             <div className={styles.fieldTitle}>Field Title</div>
             <div className={styles.fieldType}>Field Type</div>
           </div>
-          {this.state.ListOfGroups.map(group => <Group key={group.Name} name={group.Name} fields={group.Fields} addFieldHandler={this.addFieldHandler} clickHandler={this.handleFieldClick} />)}
+          {this.state.ListOfGroups.map(group => <Group key={group.Name} name={group.Name} fields={group.Fields} fieldsAscending={group.Ascending} sortHandler={this.sortGroupFields} addFieldHandler={this.addFieldHandler} clickHandler={this.handleFieldClick} />)}
         </div>
       </div>
     );
@@ -269,7 +300,7 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
 
   protected async _retrieveColumns(): Promise<any> {
     let context = this.props.context;
-    let requestUrl = context.pageContext.web.absoluteUrl + `/_api/web/fields`; //?$filter=CanBeDeleted eq true`;
+    let requestUrl = context.pageContext.web.absoluteUrl + `/_api/web/fields?&$orderBy=Title`; //?$filter=CanBeDeleted eq true`;
 
     let response : SPHttpClientResponse = await context.spHttpClient.get(requestUrl, SPHttpClient.configurations.v1);
     
@@ -282,7 +313,7 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
         for (let key in refinedGroups){
           if(key == "_Hidden") continue;
           let obj = refinedGroups[key];
-          groupsArray.push({Name: key, Fields: (obj as ISPField[])});
+          groupsArray.push({Name: key, Ascending: true, Fields: (obj as ISPField[])});
         }
         this.setState({ListOfGroups: groupsArray});
       }

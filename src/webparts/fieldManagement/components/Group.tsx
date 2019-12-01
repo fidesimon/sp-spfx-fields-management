@@ -1,20 +1,24 @@
 import * as React from 'react';
 import SPField, { ISPField } from './SPField';
 import styles from './FieldManagement.module.scss';
-import { DetailsList } from 'office-ui-fabric-react';
+import { Icon } from 'office-ui-fabric-react/lib/Icon';
+
 
 export interface IGroup{
     Name: string;
     Fields?: ISPField[];
     InternalName?: string;
     GroupId?: string;
+    Ascending: boolean;
   }
   
   export type GroupProps = {
     name: string
     fields?: ISPField[],
     clickHandler: Function,
-    addFieldHandler: Function
+    addFieldHandler: Function,
+    sortHandler: Function,
+    fieldsAscending: boolean
   }
 
   export class Group extends React.Component<GroupProps, {}> {
@@ -24,7 +28,18 @@ export interface IGroup{
       return(
         <div className={styles.container}>
           <div className={styles.groupHeader}>
-            <div className={styles.groupName}>{groupName}</div>
+            <div className={styles.groupName}>
+              <div className={styles.sort} onClick={()=>this.props.sortHandler(groupName, !this.props.fieldsAscending)}>
+                {this.props.fieldsAscending ? 
+                  <Icon iconName="Ascending" className={styles.sortingIcon} />
+                  :
+                  <Icon iconName="Descending" className={styles.sortingIcon} />
+                }
+                {groupName}
+              </div>
+              
+            </div>
+            
             <div onClick={()=>this.props.addFieldHandler(groupName)} className={styles.pullRight}>Add New Field</div>
           </div>
           { fields.map(field => <SPField key={field.Id} field={field} clickHandler={this.props.clickHandler} />)}
