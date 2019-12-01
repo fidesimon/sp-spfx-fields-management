@@ -2,7 +2,7 @@ import * as React from 'react';
 import styles from './FieldManagement.module.scss';
 import { IFieldManagementProps } from './IFieldManagementProps';
 import { Panel, PanelType, DetailsList } from 'office-ui-fabric-react';
-import { IGroup } from './Group';
+import { IGroup, Group } from './Group';
 import { GroupList } from './GroupList';
 import FieldDisplay from './FieldDisplay';
 import FieldCreate from './FieldCreate';
@@ -254,7 +254,7 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
             <div className={styles.fieldTitle}>Field Title</div>
             <div className={styles.fieldType}>Field Type</div>
           </div>
-          <GroupList groups={this.state.ListOfGroups} addFieldHandler={this.addFieldHandler} clickHandler={this.handleFieldClick} />
+          {this.state.ListOfGroups.map(group => <Group key={group.Name} name={group.Name} fields={group.Fields} addFieldHandler={this.addFieldHandler} clickHandler={this.handleFieldClick} />)}
         </div>
       </div>
     );
