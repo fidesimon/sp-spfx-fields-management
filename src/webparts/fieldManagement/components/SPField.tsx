@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Icon } from 'office-ui-fabric-react/lib/Icon';
 import styles from './FieldManagement.module.scss';
 
 export type SPFieldProps = {
@@ -16,7 +17,15 @@ export default class SPField extends React.Component<SPFieldProps, {}>{
       return(
         <div className="ms-Grid-row" onClick={() => this.props.clickHandler(field)} style={{backgroundColor: this.props.field.JustAdded ? 'limegreen' : 'white'}}>
           <div className="ms-Grid-col ms-lg6">{field.Title}</div>
-          <div className="ms-Grid-col ms-lg6">{field.TypeDisplayName}</div>
+          <div className="ms-Grid-col ms-lg5">{field.TypeDisplayName}</div>
+          <div className="ms-Grid-col ms-lg1">
+            {
+              this.props.field.CanBeDeleted ?
+              <Icon iconName="Delete" style={{color: '#ff0000'}} />
+              :
+              <Icon iconName="Delete" style={{color: '#d8d8d8'}} />
+            }
+          </div>
         </div>
       );
     }
