@@ -236,12 +236,15 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
   closeFieldCreatePanel = (fieldData) => {
     let currentItems = this.state.ListOfGroups;
     fieldData.JustAdded = true;
+    let isAsc = true;
     currentItems.forEach((item)=>{
       if(item.Name == fieldData.Group){
         item.Fields.push(fieldData as ISPField);
+        isAsc = item.Ascending;
       }
     });
     this.setState({isCreateFieldPanelOpen: false, ListOfGroups: currentItems});
+    this.sortGroupFields(fieldData.Group, isAsc);
   }
 
   sortGroupFields = (groupName, ascending: boolean) => {
