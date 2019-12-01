@@ -246,14 +246,13 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
 
   sortGroupFields = (groupName, ascending: boolean) => {
     function compare(a, b) {
-      // Use toUpperCase() to ignore character casing
-      const bandA = a.Title.toUpperCase();
-      const bandB = b.Title.toUpperCase();
+      const val1 = a.Title.toUpperCase();
+      const val2 = b.Title.toUpperCase();
     
       let comparison = 0;
-      if (bandA > bandB) {
+      if (val1 > val2) {
         comparison = ascending ? 1 : -1;
-      } else if (bandA < bandB) {
+      } else if (val1 < val2) {
         comparison = ascending ? -1 : 1;
       }
       return comparison;
