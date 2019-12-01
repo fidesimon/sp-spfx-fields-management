@@ -64,6 +64,8 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
         //Add column internalName validation check. + possible counter
     }
 
+    getUpperCaseStringForBool = (value: boolean) => value.toString().toUpperCase();
+
     createFieldHandler(): Promise<any>{
         let context = this.props.context;
         let data = this.state;
@@ -98,10 +100,22 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                     Description: data.description,
 
                     UnlimitedLengthInDocumentLibrary: data.allowUnlimitedLength,
-                    AllowHyperlink: data.allowRichText,
                     AppendOnly: data.appendChangesToExistingText,
                     NumberOfLines: data.numberOfLinesForEditing,
-                    RichText: data.allowRichText
+                    RichText: data.allowRichText,
+                    SchemaXml: `<Field
+                                Name="${data.internalName}"
+                                DisplayName="${data.columnName}"
+                                Description="${data.description}"
+                                StaticName="${data.internalName}"
+                                Group="${data.group}"
+                                Type="Note"
+                                NumLines="${data.numberOfLinesForEditing}"
+                                UnlimitedLengthInDocumentLibrary="${this.getUpperCaseStringForBool(data.allowUnlimitedLength)}" 
+                                Required="${this.getUpperCaseStringForBool(data.required)}" 
+                                AppendOnly="${this.getUpperCaseStringForBool(data.appendChangesToExistingText)}" 
+                                RichText="${this.getUpperCaseStringForBool(data.allowRichText)}"
+                                />`
                 }
                 break;
             case FieldTypeKindEnum.Number:
@@ -198,7 +212,9 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                             <Toggle label="Required" onChanged={(evt) => this.setState({required: evt})} />
                             <Toggle label="Allow unlimited length in document libraries" onChanged={(evt) => this.setState({allowUnlimitedLength: evt})} />
                             <TextField label="Number of lines for editing" max={255} min={0} type="number" defaultValue="6" onChanged={(evt: number) => { this.setState({ numberOfLinesForEditing: evt })}} />
-                            <Toggle label="Allow enhanced rich text" checked={this.state.allowRichText} onChanged={(evt) => this.setState({allowRichText: evt})} /> 
+                            <Toggle label="Allow enhanced rich text" checked={this.state.allowRichText} onChanged={(evt) => {
+                                this.setState({allowRichText: evt})}
+                                } /> 
                             <Toggle label="Append Changes to Existing Text" onChanged={(evt) => this.setState({appendChangesToExistingText: evt})} />
                         </div> : null
                 }
