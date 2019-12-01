@@ -233,14 +233,17 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
     this.setState({isCreateFieldPanelOpen: true, createFieldGroupName: groupName});
   }
   
+  closeFieldCreatePanel = () => {
+    this.setState({isCreateFieldPanelOpen: false});
+  }
 
   public render(): React.ReactElement<IFieldManagementProps> {
     let {groups, items} = this.state.fieldsPlain;///this.magicWithGroups(this.mockData);
 
     return (
       <div className={styles.fieldManagement}>
-        <Panel headerText="Create new site column" isOpen={this.state.isCreateFieldPanelOpen} type={PanelType.medium} onDismiss={() => this.setState({isCreateFieldPanelOpen: false})}>
-          <FieldCreate context={this.props.context} group={this.state.createFieldGroupName} />
+        <Panel headerText="Create new site column" isOpen={this.state.isCreateFieldPanelOpen} type={PanelType.medium} onDismiss={() => this.closeFieldCreatePanel()}>
+          <FieldCreate context={this.props.context} group={this.state.createFieldGroupName} onItemSaved={this.closeFieldCreatePanel} />
         </Panel>
         <Panel isOpen={this.state.isPanelOpened} type={PanelType.medium} onDismiss={() => this.setState({isPanelOpened: false})}>
           <FieldDisplay field={this.state.fieldToDisplay} />
@@ -255,15 +258,6 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
         </div>
       </div>
     );
-    /* This part of code is for further investigation on a better way of displaying fields.
-            <DetailsList 
-            items={ items }
-            groups= {groups}
-            compact={ true }
-            columns={ [{key:"Title", name:"Title", fieldName:"Title", minWidth:200}, {key:"TypeDisplayName", name:"TypeDisplayName", fieldName:"TypeDisplayName", minWidth:200}, {key:"Group", name:"Group", fieldName:"Group", minWidth:200}] }
-            isHeaderVisible={ true }
-          />
-          */
   }
 
   protected groupBy = key => array =>

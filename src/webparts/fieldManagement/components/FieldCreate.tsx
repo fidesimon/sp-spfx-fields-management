@@ -9,7 +9,8 @@ import { BaseComponentContext } from '@microsoft/sp-component-base';
 
 export interface FieldCreateProps {
     group: string,
-    context: BaseComponentContext
+    context: BaseComponentContext,
+    onItemSaved: Function
 }
 
 export interface FieldCreateState{
@@ -64,7 +65,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
 
     getUpperCaseStringForBool = (value: boolean) => value.toString().toUpperCase();
 
-    createFieldHandler(): Promise<any>{
+    async createFieldHandler(): Promise<any>{
         let context = this.props.context;
         let data = this.state;
         let body: ISPField;
@@ -147,10 +148,11 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
             headers: h2,
             body: bodyStr
         };
-        return context.spHttpClient.post(context.pageContext.web.absoluteUrl + `/_api/web/fields`, SPHttpClient.configurations.v1, optUpdate1)
-            .then((response: SPHttpClientResponse) => {
-            return response.json();
-        });
+        let response = await context.spHttpClient.post(context.pageContext.web.absoluteUrl + `/_api/web/fields`, SPHttpClient.configurations.v1, optUpdate1);
+        //let jsonResponse = await response.json();
+        if(response.status == 201){
+            this.props.onItemSaved();
+        }
     }
 
     // Comment for rendering part: There are components with the following logic:
