@@ -55,8 +55,6 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
         }
     }
 
-
-
     generateInternalName(){
         let columnName: string = (document.getElementById("columnName") as HTMLInputElement).value;
         let newValue: string =  columnName.replace(/[^A-Z0-9]+/ig, "");
@@ -141,7 +139,6 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
         }
         
         let bodyStr = JSON.stringify(body);
-        console.log(bodyStr);
         const h2 = new Headers();
         h2.append("Accept", "application/json;odata.metadata=full");
         h2.append("Content-type", "application/json;odata.metadata=full");
@@ -152,7 +149,6 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
         };
         return context.spHttpClient.post(context.pageContext.web.absoluteUrl + `/_api/web/fields`, SPHttpClient.configurations.v1, optUpdate1)
             .then((response: SPHttpClientResponse) => {
-            console.log(response.json());
             return response.json();
         });
     }
