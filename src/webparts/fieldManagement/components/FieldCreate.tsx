@@ -269,6 +269,8 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                             <Toggle label="Enforce Unique Values" onChanged={(evt) => this.setState({enforceUniqueValues: evt})} />
                             <TextField label="Type each choice on a separate line" defaultValue="Enter Choice #1\nEnter Choice #2\nEnter Choice #3" multiline autoAdjustHeight onChanged={(evt: string) => { this.setState({ description: evt })}} />
                             <ChoiceGroup label="Display choices using" defaultSelectedKey="DropDown" options={choiceFieldFormatOptions} />
+                            <Toggle label="Allow 'Fill-in' choices" />
+
                         </div> : null
                 }
             <br /><PrimaryButton text="Save" onClick={() => this.createFieldHandler()} />
