@@ -285,6 +285,17 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
         headers: h2
     };
     let response = await context.spHttpClient.post(context.pageContext.web.absoluteUrl + `/_api/web/fields/getbyid(guid'${id}')`, SPHttpClient.configurations.v1, optUpdate1);
+
+    if(response.status == 204){
+      console.log("Field deleted ", id);
+      let currentItems = this.state.ListOfGroups;
+      currentItems.forEach((item)=>{
+        if(item.Name == groupName){
+          item.Fields = item.Fields.filter(n=>n.Id != id);
+        }
+      });
+      this.setState({ListOfGroups: currentItems});
+    }
   }
 
   public render(): React.ReactElement<IFieldManagementProps> {
