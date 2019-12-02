@@ -229,6 +229,12 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                             <Toggle label="Show as percentage (for example, 50%)" onChanged={(evt) => this.setState({showAsPercentage: evt})} />
                         </div> : null
                 }
+                {
+                    this.state.fieldType == FieldTypeKindEnum.Choice ?
+                        <div>
+                            <Toggle label="Enforce Unique Values" onChanged={(evt) => this.setState({enforceUniqueValues: evt})} />
+                        </div> : null
+                }
             <br /><PrimaryButton text="Save" onClick={() => this.createFieldHandler()} />
                 <Button text="Cancel" />
             </div>
