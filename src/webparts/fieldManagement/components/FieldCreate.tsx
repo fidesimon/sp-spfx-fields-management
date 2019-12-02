@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { Toggle } from 'office-ui-fabric-react/lib/Toggle';
-import { PrimaryButton, Button, Dropdown, IDropdownOption, FacepileBase } from 'office-ui-fabric-react';
+import { PrimaryButton, Button, Dropdown, IDropdownOption, FacepileBase, IChoiceGroupOption, ChoiceGroup } from 'office-ui-fabric-react';
 import { ISPHttpClientOptions, SPHttpClientResponse, SPHttpClient } from '@microsoft/sp-http';
 import { ISPField } from './SPField';
 import { FieldTypeKindEnum } from './FieldTypeKindEnum';
@@ -202,6 +202,21 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
             { key: 4, text: '4' },
             { key: 5, text: '5' }
           ];
+          const choiceFieldFormatOptions: IChoiceGroupOption[] = [
+            {
+              key: 'DropDown',
+              text: 'Drop-Down Menu'
+            },
+            {
+              key: 'RadioButtons',
+              text: 'Radio Buttons'
+            },
+            {
+              key: 'CheckBoxes',
+              text: 'Checkboxes (allow multiple selection)',
+              disabled: true
+            }
+          ];
         return (
             <div>
                 <TextField label="Column Name" id="columnName" required value={this.state.columnName} onKeyUp={() => this.generateInternalName()} />
@@ -253,7 +268,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                         <div>
                             <Toggle label="Enforce Unique Values" onChanged={(evt) => this.setState({enforceUniqueValues: evt})} />
                             <TextField label="Type each choice on a separate line" defaultValue="Enter Choice #1\nEnter Choice #2\nEnter Choice #3" multiline autoAdjustHeight onChanged={(evt: string) => { this.setState({ description: evt })}} />
-
+                            <ChoiceGroup label="Display choices using" defaultSelectedKey="DropDown" options={choiceFieldFormatOptions} />
                         </div> : null
                 }
             <br /><PrimaryButton text="Save" onClick={() => this.createFieldHandler()} />
