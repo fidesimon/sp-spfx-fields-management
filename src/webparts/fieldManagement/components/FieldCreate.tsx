@@ -137,6 +137,25 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                     SchemaXml: '<Field Type="Number" DisplayName="'+ data.columnName + '" Description="'+data.description+'" Required="'+ (data.required? "TRUE" : "FALSE") +'" Percentage="'+ (data.showAsPercentage? "TRUE" : "FALSE") +'" EnforceUniqueValues="'+ (data.enforceUniqueValues? "TRUE" : "FALSE") +'" Decimals="'+data.displayFormat+'" Group="'+data.group+'" StaticName="'+data.internalName+'" Name="'+data.internalName+'" Version="1" '+ minString + ' ' + maxString + '>'+ defaultString +'</Field>'
                 }
                 break;
+            case FieldTypeKindEnum.Choice:
+                body = {
+                    "@odata.type": "#SP.FieldChoice",
+                    Title: data.columnName,
+                    StaticName: data.internalName,
+                    InternalName: data.internalName,
+                    FieldTypeKind: FieldTypeKindEnum.Choice,
+                    SchemaXml: `<Field 
+                                    Type="Choice" 
+                                    DisplayName="${data.columnName}" 
+                                    StaticName="${data.internalName}" 
+                                    Name="${data.internalName}"
+                                    Group="${data.group}" 
+                                    Required="${this.getUpperCaseStringForBool(data.required)}" 
+                                    EnforceUniqueValues="${this.getUpperCaseStringForBool(data.enforceUniqueValues)}" 
+                                >
+                                </Field>`
+                }
+                break;
         }
         
         let bodyStr = JSON.stringify(body);
