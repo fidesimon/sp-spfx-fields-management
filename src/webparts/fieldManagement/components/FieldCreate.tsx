@@ -30,7 +30,10 @@ export interface FieldCreateState{
     minValue: number,
     maxValue: number,
     showAsPercentage: boolean,
-    displayFormat: number
+    displayFormat: number,
+    choices: string[],
+    choiceFormat: string,
+    choiceFillIn: boolean
 }
 
 export default class FieldCreate extends React.Component<FieldCreateProps, FieldCreateState>{
@@ -52,7 +55,10 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
             minValue: null,
             maxValue: null,
             showAsPercentage: false,
-            displayFormat: -1
+            displayFormat: -1,
+            choices: [],
+            choiceFormat: 'DropDown',
+            choiceFillIn: false
         }
     }
 
@@ -267,9 +273,18 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                     this.state.fieldType == FieldTypeKindEnum.Choice ?
                         <div>
                             <Toggle label="Enforce Unique Values" onChanged={(evt) => this.setState({enforceUniqueValues: evt})} />
-                            <TextField label="Type each choice on a separate line" defaultValue="Enter Choice #1\nEnter Choice #2\nEnter Choice #3" multiline autoAdjustHeight onChanged={(evt: string) => { this.setState({ description: evt })}} />
+                            <TextField 
+                                label="Type each choice on a separate line" 
+                                defaultValue="Enter Choice #1\nEnter Choice #2\nEnter Choice #3" 
+                                multiline 
+                                autoAdjustHeight 
+                                onChanged={(evt: string) => { 
+                                        this.setState({ description: evt })}
+                                    } 
+                            />
                             <ChoiceGroup label="Display choices using" defaultSelectedKey="DropDown" options={choiceFieldFormatOptions} />
                             <Toggle label="Allow 'Fill-in' choices" />
+                            <TextField label="Default value" value={this.state.defaultValue} />
 
                         </div> : null
                 }
