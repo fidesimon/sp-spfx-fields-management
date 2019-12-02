@@ -42,6 +42,7 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
   constructor(props){
     super(props);
     this.state = { ListOfGroups: this.mockData, createFieldGroupName: '', isPanelOpened: false, isCreateFieldPanelOpen: false, fieldToDisplay: null, fieldsPlain: this.magicWithGroups(this.mockData)}
+    this.deleteField.bind(this);
   }
 
   magicWithGroups(groups: IGroup[]): DataDetailedList{
@@ -270,8 +271,20 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
     this.setState({ListOfGroups: currentItems});
   }
 
-  deleteField = (id) =>{
+  async deleteField(id, groupName) : Promise<any>{
     console.log('delete field ', id);
+    let context = this.props.context;
+
+    const h2 = new Headers();
+    h2.append("Accept", "application/json;odata.metadata=full");
+    h2.append("Content-type", "application/json;odata.metadata=full");
+    h2.append("IF-MATCH", "*");
+    h2.append("X-HTTP-Method", "DELETE");
+
+    const optUpdate1: ISPHttpClientOptions = {
+        headers: h2
+    };
+    let response = await context.spHttpClient.post(context.pageContext.web.absoluteUrl + `/_api/web/fields/getbyid(guid'${id}')`, SPHttpClient.configurations.v1, optUpdate1);
   }
 
   public render(): React.ReactElement<IFieldManagementProps> {
@@ -296,7 +309,7 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
                                                         fields={group.Fields} 
                                                         fieldsAscending={group.Ascending} 
                                                         sortHandler={this.sortGroupFields} 
-                                                        deleteField={this.deleteField} 
+                                                        deleteField={this.deleteField.bind(this)} 
                                                         addFieldHandler={this.addFieldHandler} 
                                                         clickHandler={this.handleFieldClick} />)}
         </div>
