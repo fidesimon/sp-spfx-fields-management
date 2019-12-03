@@ -33,7 +33,8 @@ export interface FieldCreateState{
     displayFormat: number,
     choices: string[],
     choiceFormat: string,
-    choiceFillIn: boolean
+    choiceFillIn: boolean,
+    defaultValueChoices: IDropdownOption[]
 }
 
 export default class FieldCreate extends React.Component<FieldCreateProps, FieldCreateState>{
@@ -58,7 +59,8 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
             displayFormat: -1,
             choices: [],
             choiceFormat: 'DropDown',
-            choiceFillIn: false
+            choiceFillIn: false,
+            defaultValueChoices: [{key: '', text: '(empty)'}]
         }
     }
 
@@ -211,7 +213,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
           const choiceFieldFormatOptions: IChoiceGroupOption[] = [
             {
               key: 'DropDown',
-              text: 'Drop-Down Menu'
+              text: 'Drop-Down Menu',
             },
             {
               key: 'RadioButtons',
@@ -223,27 +225,31 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
               disabled: true
             }
           ];
+
+          const distinct = (value, index, self) => {
+              return self.indexOf(value) === index;
+          }
         return (
             <div>
                 <TextField label="Column Name" id="columnName" required value={this.state.columnName} onKeyUp={() => this.generateInternalName()} />
                 <Dropdown label="Field Type" options={options} defaultSelectedKey={this.state.fieldType} onChanged={(evt: any) => this.setState({fieldType: evt.key})} />
                 <TextField label="Internal Name" required value={this.state.internalName} onKeyUp={(evt) => this.setState({internalName: (evt.target as HTMLInputElement).value})} />
-                <TextField label="Group" defaultValue={this.props.group} onChanged={(evt: string) => { this.setState({ group: evt })}} />
-                <TextField label="Description" name="columnName" multiline autoAdjustHeight onChanged={(evt: string) => { this.setState({ description: evt })}} />
+                <TextField label="Group" defaultValue={this.props.group} onChange={(evt: React.FormEvent<HTMLInputElement>) => { this.setState({ group: (evt.target as any).value })}} />
+                <TextField label="Description" name="columnName" multiline autoAdjustHeight onChange={(evt: React.FormEvent<HTMLTextAreaElement>) => { this.setState({ description: (evt.target as any).value })}} />
                 <Toggle label="Required" onChanged={(evt) => this.setState({required: evt})} />
                 { 
                     this.state.fieldType == FieldTypeKindEnum.Text ?
                         <div>
                             <Toggle label="Enforce Unique Values" onChanged={(evt) => this.setState({enforceUniqueValues: evt})} />
-                            <TextField label="Maximum number of characters" max={255} min={0} type="number" defaultValue="255" onChanged={(evt: number) => { this.setState({ maxNoCharacters: evt })}} />
-                            <TextField label="Default value" value={this.state.defaultValue} onChanged={(evt: string) => { this.setState({ defaultValue: evt })}} />
+                            <TextField label="Maximum number of characters" max={255} min={0} type="number" defaultValue="255" onChange={(evt: React.FormEvent<HTMLInputElement>) => { this.setState({ maxNoCharacters: +((evt.target as any).value) })}} />
+                            <TextField label="Default value" value={this.state.defaultValue} onChange={(evt: React.FormEvent<HTMLInputElement>) => { this.setState({ defaultValue: (evt.target as any).value })}} />
                         </div> : null
                 }
                 {
                     this.state.fieldType == FieldTypeKindEnum.Note ?
                         <div>
                             <Toggle label="Allow unlimited length in document libraries" onChanged={(evt) => this.setState({allowUnlimitedLength: evt})} />
-                            <TextField label="Number of lines for editing" max={255} min={0} type="number" defaultValue="6" onChanged={(evt: number) => { this.setState({ numberOfLinesForEditing: evt })}} />
+                            <TextField label="Number of lines for editing" max={255} min={0} type="number" defaultValue="6" onChange={(evt: React.FormEvent<HTMLInputElement>) => { this.setState({ numberOfLinesForEditing: +((evt.target as any).value) })}} />
                             <Toggle label="Allow enhanced rich text" checked={this.state.allowRichText} onChanged={(evt) => {
                                 this.setState({allowRichText: evt})}
                                 } /> 
@@ -254,17 +260,17 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                     this.state.fieldType == FieldTypeKindEnum.Number ?
                         <div>
                             <Toggle label="Enforce Unique Values" onChanged={(evt) => this.setState({enforceUniqueValues: evt})} />
-                            <TextField label="Minimum allowed value" type="number" onChanged={(evt: number) => { 
-                                this.setState({ minValue: (evt.toString().length == 0) ? null : evt })}
+                            <TextField label="Minimum allowed value" type="number" onChange={(evt: React.FormEvent<HTMLInputElement>) => { 
+                                this.setState({ minValue: ((evt.target as any).valueAsNumber.toString().length == 0) ? null : (evt.target as any).valueAsNumber })}
                                 } />
-                            <TextField label="Maximum allowed value" type="number" onChanged={(evt: number) => { 
-                                this.setState({ maxValue: (evt.toString().length == 0) ? null : evt })}
+                            <TextField label="Maximum allowed value" type="number" onChange={(evt: React.FormEvent<HTMLInputElement>) => { 
+                                this.setState({ maxValue: ((evt.target as any).valueAsNumber.toString().length == 0) ? null : (evt.target as any).valueAsNumber })}
                                 } />
                             <Dropdown label="Number of decimal places" options={optionsDisplayFormat} defaultSelectedKey={this.state.displayFormat} onChanged={(evt: IDropdownOption) => {
                                 this.setState({displayFormat: +(evt.key)})}
                             }/>                        
-                            <TextField label="Default value" type="number" onChanged={(evt: number) => { 
-                                this.setState({ defaultValue: evt.toString() })}
+                            <TextField label="Default value" type="number" onChange={(evt: React.FormEvent<HTMLInputElement>) => { 
+                                this.setState({ defaultValue: (evt.target as any).valueAsNumber.toString() })}
                                 } />
                             <Toggle label="Show as percentage (for example, 50%)" onChanged={(evt) => this.setState({showAsPercentage: evt})} />
                         </div> : null
@@ -275,17 +281,24 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                             <Toggle label="Enforce Unique Values" onChanged={(evt) => this.setState({enforceUniqueValues: evt})} />
                             <TextField 
                                 label="Type each choice on a separate line" 
-                                defaultValue="Enter Choice #1\nEnter Choice #2\nEnter Choice #3" 
+                                defaultValue={`Enter Choice #1
+Enter Choice #2
+Enter Choice #3`} 
                                 multiline 
                                 autoAdjustHeight 
-                                onChanged={(evt: string) => { 
-                                        this.setState({ description: evt })}
+                                onChange={(choices: React.FormEvent<HTMLTextAreaElement>) => { 
+                                        let distinctChoices = (choices.target as any).value.split('\n').filter(n => n!= '').filter(distinct);
+                                        let defaultValueChoices: IDropdownOption[] = distinctChoices.map((item)=>{
+                                            return {key: item, text: item};
+                                        });
+                                        defaultValueChoices.unshift({key: '', text: '(empty)', isSelected: true});
+                                        this.setState({choices: distinctChoices, defaultValueChoices: defaultValueChoices});
                                     } 
+                                }
                             />
-                            <ChoiceGroup label="Display choices using" defaultSelectedKey="DropDown" options={choiceFieldFormatOptions} />
+                            <Dropdown label="Default value" defaultValue="(empty)" options={this.state.defaultValueChoices} />
+                            <ChoiceGroup label="Display choices using" defaultSelectedKey={this.state.choiceFormat} options={choiceFieldFormatOptions} />
                             <Toggle label="Allow 'Fill-in' choices" />
-                            <TextField label="Default value" value={this.state.defaultValue} />
-
                         </div> : null
                 }
             <br /><PrimaryButton text="Save" onClick={() => this.createFieldHandler()} />
