@@ -57,10 +57,10 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
             maxValue: null,
             showAsPercentage: false,
             displayFormat: -1,
-            choices: [],
+            choices: ["Enter Choice #1", "Enter Choice #2", "Enter Choice #3"],
             choiceFormat: 'Dropdown',
             choiceFillIn: false,
-            defaultValueChoices: [{key: '', text: '(empty)'}]
+            defaultValueChoices: [{key: '', text: '(empty)', isSelected: true}, {key: 'Enter Choice #1', text: 'Enter Choice #1'}, {key: 'Enter Choice #2', text: 'Enter Choice #2'},{key: 'Enter Choice #3', text: 'Enter Choice #3'}]
         }
     }
 
@@ -294,9 +294,13 @@ Enter Choice #3`}
                                     } 
                                 }
                             />
-                            <Dropdown label="Default value" defaultValue="(empty)" options={this.state.defaultValueChoices} />
-                            <ChoiceGroup label="Display choices using" defaultSelectedKey={this.state.choiceFormat} options={choiceFieldFormatOptions} />
-                            <Toggle label="Allow 'Fill-in' choices" />
+                            <Dropdown label="Default value" defaultValue="(empty)" options={this.state.defaultValueChoices} onChanged={(evt: any) => {
+                                this.setState({defaultValue: evt.key})
+                            }} />
+                            <ChoiceGroup label="Display choices using" defaultSelectedKey={this.state.choiceFormat} options={choiceFieldFormatOptions} onChanged={(evt: any) => { 
+                                this.setState({choiceFormat: evt.key})
+                            }} />
+                            <Toggle label="Allow 'Fill-in' choices" onChanged={(evt) => this.setState({choiceFillIn: evt})} />
                         </div> : null
                 }
             <br /><PrimaryButton text="Save" onClick={() => this.createFieldHandler()} />
