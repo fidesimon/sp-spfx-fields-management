@@ -1,6 +1,6 @@
 {
   "name": "sp-spfx-field-management-wp",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "engines": {
     "node": ">=0.10.0"
@@ -24,22 +24,22 @@
     "@types/webpack-env": "1.13.1",
     "office-ui-fabric-react": "6.189.2",
     "react": "16.8.5",
-    "react-dom": "16.8.5",
-    "tslint-microsoft-contrib": "^5.2.1"
+    "react-dom": "16.8.5"
   },
   "resolutions": {
     "@types/react": "16.8.8"
   },
   "devDependencies": {
+    "@microsoft/rush-stack-compiler-3.2": "^0.2.3",
+    "@microsoft/rush-stack-compiler-3.3": "^0.1.6",
     "@microsoft/sp-build-web": "1.9.1",
-    "@microsoft/sp-tslint-rules": "1.9.1",
     "@microsoft/sp-module-interfaces": "1.9.1",
     "@microsoft/sp-webpart-workbench": "1.9.1",
-    "@microsoft/rush-stack-compiler-2.9": "0.7.16",
-    "gulp": "~3.9.1",
     "@types/chai": "3.4.34",
     "@types/mocha": "2.2.38",
     "ajv": "~5.2.2",
-    "typescript": "^3.4.5"
+    "gulp": "~3.9.1",
+    "tslint-microsoft-contrib": "5.2.1",
+    "typescript": "3.3.4000"
   }
 }

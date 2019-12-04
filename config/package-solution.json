@@ -3,7 +3,7 @@
   "solution": {
     "name": "sp-spfx-field-management-wp-client-side-solution",
     "id": "530fbee5-19bd-4870-aa38-3caf7cf3f445",
-    "version": "1.0.0.0",
+    "version": "1.0.0.2",
     "includeClientSideAssets": true
   },
   "paths": {
