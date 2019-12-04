@@ -10,7 +10,8 @@ import { BaseComponentContext } from '@microsoft/sp-component-base';
 export interface FieldCreateProps {
     group: string,
     context: BaseComponentContext,
-    onItemSaved: Function
+    onItemSaved: Function,
+    closePanel: Function
 }
 
 export interface FieldCreateState{
@@ -304,7 +305,7 @@ Enter Choice #3`}
                         </> : null
                 }
             <br /><PrimaryButton text="Save" onClick={() => this.createFieldHandler()} />
-                <Button text="Cancel" />
+                <Button text="Cancel" onClick={() => this.props.closePanel()} />
             </>
         );
     }

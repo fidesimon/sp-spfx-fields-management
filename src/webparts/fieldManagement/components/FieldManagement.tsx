@@ -248,6 +248,10 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
     this.sortGroupFields(fieldData.Group, isAsc);
   }
 
+  closePanel = () => {
+    this.setState({isCreateFieldPanelOpen: false});
+  }
+
   sortGroupFields = (groupName, ascending: boolean) => {
     function compare(a, b) {
       const val1 = a.Title.toUpperCase();
@@ -303,8 +307,8 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
 
     return (
       <div className={styles.fieldManagement}>
-        <Panel headerText="Create new site column" isOpen={this.state.isCreateFieldPanelOpen} type={PanelType.medium} onDismiss={() => this.setState({isCreateFieldPanelOpen: false})}>
-          <FieldCreate context={this.props.context} group={this.state.createFieldGroupName} onItemSaved={this.closeFieldCreatePanel} />
+        <Panel headerText="Create new site column" isOpen={this.state.isCreateFieldPanelOpen} type={PanelType.medium} onDismiss={() => this.closePanel()}>
+          <FieldCreate context={this.props.context} group={this.state.createFieldGroupName} onItemSaved={this.closeFieldCreatePanel} closePanel={this.closePanel} />
         </Panel>
         <Panel isOpen={this.state.isPanelOpened} type={PanelType.medium} onDismiss={() => this.setState({isPanelOpened: false})}>
           <FieldDisplay field={this.state.fieldToDisplay} />
