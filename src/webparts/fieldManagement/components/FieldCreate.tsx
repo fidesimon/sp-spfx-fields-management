@@ -58,7 +58,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
             showAsPercentage: false,
             displayFormat: -1,
             choices: [],
-            choiceFormat: 'DropDown',
+            choiceFormat: 'Dropdown',
             choiceFillIn: false,
             defaultValueChoices: [{key: '', text: '(empty)'}]
         }
@@ -146,22 +146,20 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                 }
                 break;
             case FieldTypeKindEnum.Choice:
+                let choicesString = `<CHOICES><CHOICE>${this.state.choices.join("</CHOICE><CHOICE>")}</CHOICE></CHOICES>`;
+                let defaultChoiceValueString = (this.state.defaultValue == null || this.state.defaultValue == '') ? '' : `<Default>${this.state.defaultValue}</Default>`;
                 body = {
                     "@odata.type": "#SP.FieldChoice",
                     Title: data.columnName,
                     StaticName: data.internalName,
                     InternalName: data.internalName,
                     FieldTypeKind: FieldTypeKindEnum.Choice,
-                    SchemaXml: `<Field 
-                                    Type="Choice" 
-                                    DisplayName="${data.columnName}" 
-                                    StaticName="${data.internalName}" 
-                                    Name="${data.internalName}"
-                                    Group="${data.group}" 
-                                    Required="${this.getUpperCaseStringForBool(data.required)}" 
-                                    EnforceUniqueValues="${this.getUpperCaseStringForBool(data.enforceUniqueValues)}" 
-                                >
-                                </Field>`
+                    Required: data.required,
+                    Group: data.group,
+                    DefaultValue: data.defaultValue,
+                    EnforceUniqueValues: data.enforceUniqueValues,
+                    Description: data.description,
+                    SchemaXml: `<Field Type="Choice" DisplayName="${data.columnName}" StaticName="${data.internalName}" Description="${data.description}"  Name="${data.internalName}" Group="${data.group}" Format="${data.choiceFormat}" FillInChoice="${this.getUpperCaseStringForBool(data.choiceFillIn)}" Required="${this.getUpperCaseStringForBool(data.required)}" EnforceUniqueValues="${this.getUpperCaseStringForBool(data.enforceUniqueValues)}" >${defaultChoiceValueString}${choicesString}</Field>`
                 }
                 break;
         }
@@ -212,7 +210,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
           ];
           const choiceFieldFormatOptions: IChoiceGroupOption[] = [
             {
-              key: 'DropDown',
+              key: 'Dropdown',
               text: 'Drop-Down Menu',
             },
             {
