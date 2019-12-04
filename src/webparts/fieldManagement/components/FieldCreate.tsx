@@ -228,7 +228,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
               return self.indexOf(value) === index;
           }
         return (
-            <div>
+            <>
                 <TextField label="Column Name" id="columnName" required value={this.state.columnName} onKeyUp={() => this.generateInternalName()} />
                 <Dropdown label="Field Type" options={options} defaultSelectedKey={this.state.fieldType} onChanged={(evt: any) => this.setState({fieldType: evt.key})} />
                 <TextField label="Internal Name" required value={this.state.internalName} onKeyUp={(evt) => this.setState({internalName: (evt.target as HTMLInputElement).value})} />
@@ -237,26 +237,26 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                 <Toggle label="Required" onChanged={(evt) => this.setState({required: evt})} />
                 { 
                     this.state.fieldType == FieldTypeKindEnum.Text ?
-                        <div>
+                        <>
                             <Toggle label="Enforce Unique Values" onChanged={(evt) => this.setState({enforceUniqueValues: evt})} />
                             <TextField label="Maximum number of characters" max={255} min={0} type="number" defaultValue="255" onChange={(evt: React.FormEvent<HTMLInputElement>) => { this.setState({ maxNoCharacters: +((evt.target as any).value) })}} />
                             <TextField label="Default value" value={this.state.defaultValue} onChange={(evt: React.FormEvent<HTMLInputElement>) => { this.setState({ defaultValue: (evt.target as any).value })}} />
-                        </div> : null
+                        </> : null
                 }
                 {
                     this.state.fieldType == FieldTypeKindEnum.Note ?
-                        <div>
+                        <>
                             <Toggle label="Allow unlimited length in document libraries" onChanged={(evt) => this.setState({allowUnlimitedLength: evt})} />
                             <TextField label="Number of lines for editing" max={255} min={0} type="number" defaultValue="6" onChange={(evt: React.FormEvent<HTMLInputElement>) => { this.setState({ numberOfLinesForEditing: +((evt.target as any).value) })}} />
                             <Toggle label="Allow enhanced rich text" checked={this.state.allowRichText} onChanged={(evt) => {
                                 this.setState({allowRichText: evt})}
                                 } /> 
                             <Toggle label="Append Changes to Existing Text" onChanged={(evt) => this.setState({appendChangesToExistingText: evt})} />
-                        </div> : null
+                        </> : null
                 }
                 {
                     this.state.fieldType == FieldTypeKindEnum.Number ?
-                        <div>
+                        <>
                             <Toggle label="Enforce Unique Values" onChanged={(evt) => this.setState({enforceUniqueValues: evt})} />
                             <TextField label="Minimum allowed value" type="number" onChange={(evt: React.FormEvent<HTMLInputElement>) => { 
                                 this.setState({ minValue: ((evt.target as any).valueAsNumber.toString().length == 0) ? null : (evt.target as any).valueAsNumber })}
@@ -271,11 +271,11 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                                 this.setState({ defaultValue: (evt.target as any).valueAsNumber.toString() })}
                                 } />
                             <Toggle label="Show as percentage (for example, 50%)" onChanged={(evt) => this.setState({showAsPercentage: evt})} />
-                        </div> : null
+                        </> : null
                 }
                 {
                     this.state.fieldType == FieldTypeKindEnum.Choice ?
-                        <div>
+                        <>
                             <Toggle label="Enforce Unique Values" onChanged={(evt) => this.setState({enforceUniqueValues: evt})} />
                             <TextField 
                                 label="Type each choice on a separate line" 
@@ -301,11 +301,11 @@ Enter Choice #3`}
                                 this.setState({choiceFormat: evt.key})
                             }} />
                             <Toggle label="Allow 'Fill-in' choices" onChanged={(evt) => this.setState({choiceFillIn: evt})} />
-                        </div> : null
+                        </> : null
                 }
             <br /><PrimaryButton text="Save" onClick={() => this.createFieldHandler()} />
                 <Button text="Cancel" />
-            </div>
+            </>
         );
     }
 }
