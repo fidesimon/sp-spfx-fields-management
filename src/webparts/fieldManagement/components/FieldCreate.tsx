@@ -37,7 +37,8 @@ export interface FieldCreateState{
     choiceFillIn: boolean,
     defaultValueChoices: IDropdownOption[],
     selectedCurrency: string,
-    defaultBooleanValueAsString: string;
+    defaultBooleanValueAsString: string,
+    urlFieldFormat: string
 }
 
 export default class FieldCreate extends React.Component<FieldCreateProps, FieldCreateState>{
@@ -65,6 +66,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
             choiceFillIn: false,
             selectedCurrency: "1033",
             defaultBooleanValueAsString: "1",
+            urlFieldFormat: "Hyperlink",
             defaultValueChoices: [{key: '', text: '(empty)', isSelected: true}, {key: 'Enter Choice #1', text: 'Enter Choice #1'}, {key: 'Enter Choice #2', text: 'Enter Choice #2'},{key: 'Enter Choice #3', text: 'Enter Choice #3'}]
         }
     }
@@ -201,6 +203,19 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                         SchemaXml: '<Field Type="Boolean" DisplayName="'+ data.columnName + '" Required="FALSE" EnforceUniqueValues="FALSE" Description="'+data.description+'" Group="'+data.group+'" StaticName="'+data.internalName+'" Name="'+data.internalName+'"><Default>'+data.defaultBooleanValueAsString+'</Default></Field>'
                     }
             break;
+            case FieldTypeKindEnum.URL:
+                    body = {
+                        "@odata.type": "#SP.FieldUrl",
+                        Title: data.columnName,
+                        StaticName: data.internalName,
+                        InternalName: data.internalName,
+                        FieldTypeKind: FieldTypeKindEnum.Boolean,
+                        Required: data.required,
+                        Group: data.group,
+                        Description: data.description,
+                        SchemaXml: '<Field Type="URL" DisplayName="'+ data.columnName + '" Format="'+data.urlFieldFormat+'" Required="'+this.getUpperCaseStringForBool(data.required)+'" EnforceUniqueValues="FALSE" Description="'+data.description+'" Group="'+data.group+'" StaticName="'+data.internalName+'" Name="'+data.internalName+'"></Field>'
+                    }
+            break;
         }
         
         let bodyStr = JSON.stringify(body);
@@ -235,7 +250,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
             { key: FieldTypeKindEnum.Lookup , text: 'Lookup (information already on this site)', disabled: true },
             { key: FieldTypeKindEnum.Boolean , text: 'Yes/No (check box)' },
             { key: FieldTypeKindEnum.User , text: 'Person or Group', disabled: true },
-            { key: FieldTypeKindEnum.URL , text: 'Hyperlink or Picture', disabled: true },
+            { key: FieldTypeKindEnum.URL , text: 'Hyperlink or Picture' },
             { key: FieldTypeKindEnum.Calculated , text: 'Calculated (calculation based on other columns)', disabled: true }
           ];
           const optionsDisplayFormat: IDropdownOption[] = [
@@ -506,6 +521,16 @@ Enter Choice #3`}
                     <>
                         <Dropdown label="Default value" options={[{key: '1', text: 'Yes'}, {key: '0', text: 'No'}]} defaultSelectedKey={this.state.defaultBooleanValueAsString} onChanged={(evt:any) => {
                             this.setState({defaultBooleanValueAsString: evt.key})
+                        }} />
+                    </>
+                    : null
+                }
+                {
+                    this.state.fieldType == FieldTypeKindEnum.URL ? 
+                    <>
+                        <Toggle label="Required" onChanged={(evt) => this.setState({required: evt})} />
+                        <Dropdown label="Format URL as" options={[{key: 'Hyperlink', text: 'Hyperlink'}, {key: 'Image', text: 'Picture'}]} defaultSelectedKey={this.state.urlFieldFormat} onChanged={(evt:any) => {
+                            this.setState({urlFieldFormat: evt.key})
                         }} />
                     </>
                     : null
