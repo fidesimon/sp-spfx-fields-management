@@ -3,7 +3,6 @@ import styles from './FieldManagement.module.scss';
 import { IFieldManagementProps } from './IFieldManagementProps';
 import { Panel, PanelType, DetailsList } from 'office-ui-fabric-react';
 import { IGroup, Group } from './Group';
-import { GroupList } from './GroupList';
 import FieldDisplay from './FieldDisplay';
 import FieldCreate from './FieldCreate';
 
