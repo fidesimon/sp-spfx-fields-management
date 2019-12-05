@@ -35,7 +35,8 @@ export interface FieldCreateState{
     choices: string[],
     choiceFormat: string,
     choiceFillIn: boolean,
-    defaultValueChoices: IDropdownOption[]
+    defaultValueChoices: IDropdownOption[],
+    selectedCurrency: string
 }
 
 export default class FieldCreate extends React.Component<FieldCreateProps, FieldCreateState>{
@@ -61,6 +62,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
             choices: ["Enter Choice #1", "Enter Choice #2", "Enter Choice #3"],
             choiceFormat: 'Dropdown',
             choiceFillIn: false,
+            selectedCurrency: "1033",
             defaultValueChoices: [{key: '', text: '(empty)', isSelected: true}, {key: 'Enter Choice #1', text: 'Enter Choice #1'}, {key: 'Enter Choice #2', text: 'Enter Choice #2'},{key: 'Enter Choice #3', text: 'Enter Choice #3'}]
         }
     }
@@ -436,6 +438,27 @@ Enter Choice #3`}
                                 this.setState({choiceFormat: evt.key})
                             }} />
                             <Toggle label="Allow 'Fill-in' choices" onChanged={(evt) => this.setState({choiceFillIn: evt})} />
+                        </> : null
+                }
+                {
+                    this.state.fieldType == FieldTypeKindEnum.Currency ?
+                        <>
+                            <Toggle label="Enforce Unique Values" onChanged={(evt) => this.setState({enforceUniqueValues: evt})} />
+                            <Dropdown defaultSelectedKey={this.state.selectedCurrency} options={currencyOptions} onChanged={(evt: any) => {
+                                this.setState({selectedCurrency: evt.key})
+                            }} />
+                            <TextField label="Minimum allowed value" type="number" onChange={(evt: React.FormEvent<HTMLInputElement>) => { 
+                                this.setState({ minValue: ((evt.target as any).valueAsNumber.toString().length == 0) ? null : (evt.target as any).valueAsNumber })}
+                                } />
+                            <TextField label="Maximum allowed value" type="number" onChange={(evt: React.FormEvent<HTMLInputElement>) => { 
+                                this.setState({ maxValue: ((evt.target as any).valueAsNumber.toString().length == 0) ? null : (evt.target as any).valueAsNumber })}
+                                } />
+                            <Dropdown label="Number of decimal places" options={optionsDisplayFormat} defaultSelectedKey={this.state.displayFormat} onChanged={(evt: IDropdownOption) => {
+                                this.setState({displayFormat: +(evt.key)})}
+                            }/>                        
+                            <TextField label="Default value" type="number" onChange={(evt: React.FormEvent<HTMLInputElement>) => { 
+                                this.setState({ defaultValue: (evt.target as any).valueAsNumber.toString() })}
+                                } />
                         </> : null
                 }
             <br /><PrimaryButton text="Save" onClick={() => this.createFieldHandler()} />
