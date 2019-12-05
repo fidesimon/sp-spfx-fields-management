@@ -238,14 +238,24 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
     let currentItems = this.state.ListOfGroups;
     fieldData.JustAdded = true;
     let isAsc = true;
-    currentItems.forEach((item)=>{
-      if(item.Name == fieldData.Group){
-        item.Fields.push(fieldData as ISPField);
-        isAsc = item.Ascending;
-      }
-    });
-    this.setState({isCreateFieldPanelOpen: false, ListOfGroups: currentItems});
-    this.sortGroupFields(fieldData.Group, isAsc);
+    let groupDoesNotExist: boolean = currentItems.find(n=>n.Name == fieldData.Group) == undefined ? true : false;
+    if(groupDoesNotExist){
+      currentItems.push({Name: fieldData.Group, Fields: [fieldData as ISPField], Ascending: true} as IGroup);
+      this.setState({isCreateFieldPanelOpen: false, ListOfGroups: currentItems});
+    }
+    else
+    {
+      currentItems.forEach((item)=>{
+        if(item.Name == fieldData.Group){
+          item.Fields.push(fieldData as ISPField);
+          isAsc = item.Ascending;
+        }
+      });
+      this.setState({isCreateFieldPanelOpen: false, ListOfGroups: currentItems});
+      this.sortGroupFields(fieldData.Group, isAsc);
+    }
+
+    
   }
 
   closePanel = () => {
