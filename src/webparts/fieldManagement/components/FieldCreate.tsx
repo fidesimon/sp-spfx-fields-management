@@ -80,6 +80,9 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
         let context = this.props.context;
         let data = this.state;
         let body: ISPField;
+        let minString: string = '';
+        let maxString: string = '';
+        let defaultString: string = '';
         switch(this.state.fieldType){
             case FieldTypeKindEnum.Text:
                 let defaultValueString = data.defaultValue.length == 0 ? '' : "<Default>" + data.defaultValue + "</Default>";
@@ -129,9 +132,9 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                 }
                 break;
             case FieldTypeKindEnum.Number:
-                let minString = data.minValue == null ? '' : (data.showAsPercentage ? 'Min="' + data.minValue/100 + '"' : 'Min="' + data.minValue + '"');
-                let maxString = data.maxValue == null ? '' : (data.showAsPercentage ? 'Max="' + data.maxValue/100 + '"' : 'Max="' + data.maxValue + '"');
-                let defaultString = data.defaultValue.length == 0 ? '' : "<Default>" + (data.showAsPercentage ? (+(data.defaultValue)/100).toString() : data.defaultValue) + "</Default>";
+                minString = data.minValue == null ? '' : (data.showAsPercentage ? 'Min="' + data.minValue/100 + '"' : 'Min="' + data.minValue + '"');
+                maxString = data.maxValue == null ? '' : (data.showAsPercentage ? 'Max="' + data.maxValue/100 + '"' : 'Max="' + data.maxValue + '"');
+                defaultString = data.defaultValue.length == 0 ? '' : "<Default>" + (data.showAsPercentage ? (+(data.defaultValue)/100).toString() : data.defaultValue) + "</Default>";
                 body = {
                     "@odata.type": "#SP.FieldNumber",
                     Title: data.columnName,
@@ -165,6 +168,25 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                     SchemaXml: `<Field Type="Choice" DisplayName="${data.columnName}" StaticName="${data.internalName}" Description="${data.description}"  Name="${data.internalName}" Group="${data.group}" Format="${data.choiceFormat}" FillInChoice="${this.getUpperCaseStringForBool(data.choiceFillIn)}" Required="${this.getUpperCaseStringForBool(data.required)}" EnforceUniqueValues="${this.getUpperCaseStringForBool(data.enforceUniqueValues)}" >${defaultChoiceValueString}${choicesString}</Field>`
                 }
                 break;
+            case FieldTypeKindEnum.Currency:
+                    minString = data.minValue == null ? '' : (data.showAsPercentage ? 'Min="' + data.minValue/100 + '"' : 'Min="' + data.minValue + '"');
+                    maxString = data.maxValue == null ? '' : (data.showAsPercentage ? 'Max="' + data.maxValue/100 + '"' : 'Max="' + data.maxValue + '"');
+                    defaultString = data.defaultValue.length == 0 ? '' : "<Default>" + (data.showAsPercentage ? (+(data.defaultValue)/100).toString() : data.defaultValue) + "</Default>";
+                    body = {
+                        "@odata.type": "#SP.FieldCurrency",
+                        Title: data.columnName,
+                        StaticName: data.internalName,
+                        InternalName: data.internalName,
+                        FieldTypeKind: FieldTypeKindEnum.Number,
+                        Required: data.required,
+                        EnforceUniqueValues: data.enforceUniqueValues,
+                        DefaultValue: data.defaultValue,
+                        Group: data.group,
+                        DisplayFormat: +(data.displayFormat),
+                        Description: data.description,
+                        SchemaXml: '<Field Type="Currency" DisplayName="'+ data.columnName + '" LCID="'+data.selectedCurrency+'" Description="'+data.description+'" Required="'+ (data.required? "TRUE" : "FALSE") +'" EnforceUniqueValues="'+ (data.enforceUniqueValues? "TRUE" : "FALSE") +'" Decimals="'+data.displayFormat+'" Group="'+data.group+'" StaticName="'+data.internalName+'" Name="'+data.internalName+'" Version="1" '+ minString + ' ' + maxString + '>'+ defaultString +'</Field>'
+                    }
+            break;
         }
         
         let bodyStr = JSON.stringify(body);
