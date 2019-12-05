@@ -192,7 +192,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
             { key: FieldTypeKindEnum.Note, text: 'Multiple lines of text' },
             { key: FieldTypeKindEnum.Number, text: 'Number (1, 1.0, 100)' },
             { key: FieldTypeKindEnum.Choice , text: 'Choice (menu to choose from)' },
-            { key: FieldTypeKindEnum.Currency , text: 'Currency ($, ¥, €)', disabled: true },
+            { key: FieldTypeKindEnum.Currency , text: 'Currency ($, ¥, €)' },
             { key: FieldTypeKindEnum.DateTime , text: 'Date and Time', disabled: true },
             { key: FieldTypeKindEnum.Lookup , text: 'Lookup (information already on this site)', disabled: true },
             { key: FieldTypeKindEnum.Boolean , text: 'Yes/No (check box)', disabled: true },
