@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { Toggle } from 'office-ui-fabric-react/lib/Toggle';
-import { PrimaryButton, Button, Dropdown, IDropdownOption, FacepileBase, IChoiceGroupOption, ChoiceGroup } from 'office-ui-fabric-react';
+import { PrimaryButton, Button, Dropdown, IDropdownOption, FacepileBase, IChoiceGroupOption, ChoiceGroup, IDropdown } from 'office-ui-fabric-react';
 import { ISPHttpClientOptions, SPHttpClientResponse, SPHttpClient } from '@microsoft/sp-http';
 import { ISPField } from './SPField';
 import { FieldTypeKindEnum } from './FieldTypeKindEnum';
@@ -225,7 +225,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
             }
           ];
 
-          const currencyOptions = [
+          const currencyOptions: IDropdownOption[] = [
             {key: "1164", text: "؋123,456.00 (Afghanistan)"}, 
             {key: "1052", text: "123,456.00 Lekë (Albania)"}, 
             {key: "5121", text: "123,456.00 د.ج.&rlm; (Algeria)"}, 
