@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { Toggle } from 'office-ui-fabric-react/lib/Toggle';
-import { PrimaryButton, Button, Dropdown, IDropdownOption, FacepileBase, IChoiceGroupOption, ChoiceGroup, IDropdown } from 'office-ui-fabric-react';
+import { PrimaryButton, Button, Dropdown, IDropdownOption, FacepileBase, IChoiceGroupOption, ChoiceGroup, IDropdown, DatePicker, DayOfWeek } from 'office-ui-fabric-react';
 import { ISPHttpClientOptions, SPHttpClientResponse, SPHttpClient } from '@microsoft/sp-http';
 import { ISPField } from './SPField';
 import { FieldTypeKindEnum } from './FieldTypeKindEnum';
@@ -38,7 +38,10 @@ export interface FieldCreateState{
     defaultValueChoices: IDropdownOption[],
     selectedCurrency: string,
     defaultBooleanValueAsString: string,
-    urlFieldFormat: string
+    urlFieldFormat: string,
+    dateAndTimeFormat: string,
+    friendlyDisplayFormat: string,
+    displayDefaultValueDTInput: boolean
 }
 
 export default class FieldCreate extends React.Component<FieldCreateProps, FieldCreateState>{
@@ -67,6 +70,9 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
             selectedCurrency: "1033",
             defaultBooleanValueAsString: "1",
             urlFieldFormat: "Hyperlink",
+            dateAndTimeFormat: "DateOnly",
+            friendlyDisplayFormat: "Disabled",
+            displayDefaultValueDTInput: false,
             defaultValueChoices: [{key: '', text: '(empty)', isSelected: true}, {key: 'Enter Choice #1', text: 'Enter Choice #1'}, {key: 'Enter Choice #2', text: 'Enter Choice #2'},{key: 'Enter Choice #3', text: 'Enter Choice #3'}]
         }
     }
@@ -246,7 +252,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
             { key: FieldTypeKindEnum.Number, text: 'Number (1, 1.0, 100)' },
             { key: FieldTypeKindEnum.Choice , text: 'Choice (menu to choose from)' },
             { key: FieldTypeKindEnum.Currency , text: 'Currency ($, ¥, €)' },
-            { key: FieldTypeKindEnum.DateTime , text: 'Date and Time', disabled: true },
+            { key: FieldTypeKindEnum.DateTime , text: 'Date and Time' },
             { key: FieldTypeKindEnum.Lookup , text: 'Lookup (information already on this site)', disabled: true },
             { key: FieldTypeKindEnum.Boolean , text: 'Yes/No (check box)' },
             { key: FieldTypeKindEnum.User , text: 'Person or Group', disabled: true },
@@ -499,7 +505,7 @@ Enter Choice #3`}
                         <>
                             <Toggle label="Required" onChanged={(evt) => this.setState({required: evt})} />
                             <Toggle label="Enforce Unique Values" onChanged={(evt) => this.setState({enforceUniqueValues: evt})} />
-                            <Dropdown defaultSelectedKey={this.state.selectedCurrency} options={currencyOptions} onChanged={(evt: any) => {
+                            <Dropdown label="Currency" defaultSelectedKey={this.state.selectedCurrency} options={currencyOptions} onChanged={(evt: any) => {
                                 this.setState({selectedCurrency: evt.key})
                             }} />
                             <TextField label="Minimum allowed value" type="number" onChange={(evt: React.FormEvent<HTMLInputElement>) => { 
@@ -535,10 +541,50 @@ Enter Choice #3`}
                     </>
                     : null
                 }
+                {
+                    this.state.fieldType == FieldTypeKindEnum.DateTime ?
+                    <>
+                        <Toggle label="Required" onChanged={(evt) => this.setState({required: evt})} />
+                        <Toggle label="Enforce Unique Values" onChanged={(evt) => this.setState({enforceUniqueValues: evt})} />
+                        <ChoiceGroup styles={{flexContainer: {display: "flex"}}} label="Date and Time Format" defaultSelectedKey={this.state.dateAndTimeFormat} options={[{key: "DateOnly", text: "Date Only\u00A0\u00A0"},{key: "DateTime", text: "Date & Time"}]} onChanged={(evt: any) => { 
+                                this.setState({dateAndTimeFormat: evt.key})
+                            }} />
+                        <ChoiceGroup styles={{flexContainer: {display: "flex"}}} label="Display Format" defaultSelectedKey={this.state.friendlyDisplayFormat} options={[{key: "Disabled", text: "Standard\u00A0\u00A0"},{key: "Relative", text: "Friendly"}]} onChanged={(evt: any) => { 
+                                this.setState({friendlyDisplayFormat: evt.key})
+                            }} />
+                        <ChoiceGroup label="Default Value" defaultSelectedKey={this.state.defaultValue} options={[{key: "None", text: "(None)"},{key: "[Today]", text: "Today's Date"}, {key: "Another", text: "Specified Date"}]} onChanged={(evt: any) => { 
+                                switch(evt.key){
+                                    case "None":
+                                        this.setState({defaultValue: "", displayDefaultValueDTInput: false});
+                                    break;
+                                    case "[Today]":
+                                        this.setState({defaultValue: "[Today]", displayDefaultValueDTInput: false});
+                                    break;
+                                    case "Another":
+                                        this.setState({defaultValue: "", displayDefaultValueDTInput: true});
+                                    break;
+                                }
+                                this.setState({dateAndTimeFormat: evt.key})
+                            }} />
+                            {this.state.displayDefaultValueDTInput ? 
+                                <DatePicker 
+                                label="Enter Default Date" 
+                                allowTextInput={false} 
+                                firstDayOfWeek={DayOfWeek.Monday} 
+                                formatDate={this._onFormatDate}
+                                />
+                            : null }
+                    </>
+                    : null
+                }
             <br /><PrimaryButton text="Save" onClick={() => this.createFieldHandler()} />
                 <Button text="Cancel" onClick={() => this.props.closePanel()} />
             </>
         );
     }
+    private _onFormatDate = (date: Date): string => {
+        this.setState({defaultValue: date.toISOString()});
+        return date.getDate() + '/' + (date.getMonth() + 1) + '/' + (date.getFullYear() % 100);
+      };
 }
 
