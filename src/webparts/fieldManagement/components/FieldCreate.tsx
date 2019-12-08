@@ -41,7 +41,7 @@ export interface FieldCreateState{
     urlFieldFormat: string;
     dateAndTimeFormat: string;
     friendlyDisplayFormat: string;
-    displayDefaultValueDTInput: boolean
+    displayDefaultValueDTInput: boolean;
 }
 
 export default class FieldCreate extends React.Component<FieldCreateProps, FieldCreateState>{
@@ -74,19 +74,19 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
             friendlyDisplayFormat: "Disabled",
             displayDefaultValueDTInput: false,
             defaultValueChoices: [{key: '', text: '(empty)', isSelected: true}, {key: 'Enter Choice #1', text: 'Enter Choice #1'}, {key: 'Enter Choice #2', text: 'Enter Choice #2'},{key: 'Enter Choice #3', text: 'Enter Choice #3'}]
-        }
+        };
     }
 
-    generateInternalName(){
+    protected generateInternalName(){
         let columnName: string = (document.getElementById("columnName") as HTMLInputElement).value;
         let newValue: string =  columnName.replace(/[^A-Z0-9]+/ig, "");
         this.setState({columnName: columnName, internalName: (newValue.length >= 32 ? newValue.substr(0, 32) : newValue)});
         //Add column internalName validation check. + possible counter
     }
 
-    getUpperCaseStringForBool = (value: boolean) => value.toString().toUpperCase();
+    private getUpperCaseStringForBool = (value: boolean) => value.toString().toUpperCase();
 
-    async createFieldHandler(): Promise<any>{
+    protected async createFieldHandler(): Promise<any>{
         let context = this.props.context;
         let data = this.state;
         let body: ISPField;
@@ -109,7 +109,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                     Group: data.group,
                     Description: data.description,
                     SchemaXml: '<Field Type="Text" Description="'+data.description+'" DisplayName="'+ data.columnName + '" Required="'+ (data.required? "TRUE" : "FALSE") +'" EnforceUniqueValues="'+ (data.enforceUniqueValues? "TRUE" : "FALSE") +'" Group="'+data.group+'" StaticName="'+data.internalName+'" Name="'+data.internalName+'">'+ defaultValueString +'</Field>'
-                }
+                };
                 break;
             case FieldTypeKindEnum.Note:
                 body = {
@@ -139,7 +139,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                                 AppendOnly="${this.getUpperCaseStringForBool(data.appendChangesToExistingText)}" 
                                 RichText="${this.getUpperCaseStringForBool(data.allowRichText)}"
                                 />`
-                }
+                };
                 break;
             case FieldTypeKindEnum.Number:
                 minString = data.minValue == null ? '' : (data.showAsPercentage ? 'Min="' + data.minValue/100 + '"' : 'Min="' + data.minValue + '"');
@@ -159,7 +159,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                     ShowAsPercentage: data.showAsPercentage,
                     Description: data.description,
                     SchemaXml: '<Field Type="Number" DisplayName="'+ data.columnName + '" Description="'+data.description+'" Required="'+ (data.required? "TRUE" : "FALSE") +'" Percentage="'+ (data.showAsPercentage? "TRUE" : "FALSE") +'" EnforceUniqueValues="'+ (data.enforceUniqueValues? "TRUE" : "FALSE") +'" Decimals="'+data.displayFormat+'" Group="'+data.group+'" StaticName="'+data.internalName+'" Name="'+data.internalName+'" Version="1" '+ minString + ' ' + maxString + '>'+ defaultString +'</Field>'
-                }
+                };
                 break;
             case FieldTypeKindEnum.Choice:
                 let choicesString = `<CHOICES><CHOICE>${this.state.choices.join("</CHOICE><CHOICE>")}</CHOICE></CHOICES>`;
@@ -176,7 +176,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                     EnforceUniqueValues: data.enforceUniqueValues,
                     Description: data.description,
                     SchemaXml: `<Field Type="Choice" DisplayName="${data.columnName}" StaticName="${data.internalName}" Description="${data.description}"  Name="${data.internalName}" Group="${data.group}" Format="${data.choiceFormat}" FillInChoice="${this.getUpperCaseStringForBool(data.choiceFillIn)}" Required="${this.getUpperCaseStringForBool(data.required)}" EnforceUniqueValues="${this.getUpperCaseStringForBool(data.enforceUniqueValues)}" >${defaultChoiceValueString}${choicesString}</Field>`
-                }
+                };
                 break;
             case FieldTypeKindEnum.Currency:
                     minString = data.minValue == null ? '' : (data.showAsPercentage ? 'Min="' + data.minValue/100 + '"' : 'Min="' + data.minValue + '"');
@@ -195,7 +195,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                         DisplayFormat: +(data.displayFormat),
                         Description: data.description,
                         SchemaXml: '<Field Type="Currency" DisplayName="'+ data.columnName + '" LCID="'+data.selectedCurrency+'" Description="'+data.description+'" Required="'+ (data.required? "TRUE" : "FALSE") +'" EnforceUniqueValues="'+ (data.enforceUniqueValues? "TRUE" : "FALSE") +'" Decimals="'+data.displayFormat+'" Group="'+data.group+'" StaticName="'+data.internalName+'" Name="'+data.internalName+'" Version="1" '+ minString + ' ' + maxString + '>'+ defaultString +'</Field>'
-                    }
+                    };
             break;
             case FieldTypeKindEnum.Boolean:
                     body = {
@@ -207,7 +207,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                         Group: data.group,
                         Description: data.description,
                         SchemaXml: '<Field Type="Boolean" DisplayName="'+ data.columnName + '" Required="FALSE" EnforceUniqueValues="FALSE" Description="'+data.description+'" Group="'+data.group+'" StaticName="'+data.internalName+'" Name="'+data.internalName+'"><Default>'+data.defaultBooleanValueAsString+'</Default></Field>'
-                    }
+                    };
             break;
             case FieldTypeKindEnum.URL:
                     body = {
@@ -220,7 +220,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                         Group: data.group,
                         Description: data.description,
                         SchemaXml: '<Field Type="URL" DisplayName="'+ data.columnName + '" Format="'+data.urlFieldFormat+'" Required="'+this.getUpperCaseStringForBool(data.required)+'" EnforceUniqueValues="FALSE" Description="'+data.description+'" Group="'+data.group+'" StaticName="'+data.internalName+'" Name="'+data.internalName+'"></Field>'
-                    }
+                    };
             break;
             case FieldTypeKindEnum.DateTime:
                     defaultString = data.defaultValue == "" ? "" : `<Default>${data.defaultValue}</Default>`;
@@ -236,7 +236,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                         Group: data.group,
                         Description: data.description,
                         SchemaXml: `<Field Type="DateTime" DisplayName="${data.columnName}" Required="${this.getUpperCaseStringForBool(data.required)}" ${additionalAttributesForToday} EnforceUniqueValues="${this.getUpperCaseStringForBool(data.enforceUniqueValues)}" Format="${data.dateAndTimeFormat}" Group="${data.group}" FriendlyDisplayFormat="${data.friendlyDisplayFormat}" StaticName="${data.internalName}" Name="${data.internalName}">${defaultString}</Field>`
-                    }
+                    };
             break;
         }
         
@@ -436,21 +436,21 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
 
           const distinct = (value, index, self) => {
               return self.indexOf(value) === index;
-          }
+          };
         return (
             <>
                 <TextField label="Column Name" id="columnName" required value={this.state.columnName} onKeyUp={() => this.generateInternalName()} />
                 <Dropdown label="Field Type" options={options} defaultSelectedKey={this.state.fieldType} onChanged={(evt: any) => this.setState({fieldType: evt.key})} />
                 <TextField label="Internal Name" required value={this.state.internalName} onKeyUp={(evt) => this.setState({internalName: (evt.target as HTMLInputElement).value})} />
-                <TextField label="Group" defaultValue={this.props.group} onChange={(evt: React.FormEvent<HTMLInputElement>) => { this.setState({ group: (evt.target as any).value })}} />
-                <TextField label="Description" name="columnName" multiline autoAdjustHeight onChange={(evt: React.FormEvent<HTMLTextAreaElement>) => { this.setState({ description: (evt.target as any).value })}} />
+                <TextField label="Group" defaultValue={this.props.group} onChange={(evt: React.FormEvent<HTMLInputElement>) => { this.setState({ group: (evt.target as any).value });}} />
+                <TextField label="Description" name="columnName" multiline autoAdjustHeight onChange={(evt: React.FormEvent<HTMLTextAreaElement>) => { this.setState({ description: (evt.target as any).value });}} />
                 { 
                     this.state.fieldType == FieldTypeKindEnum.Text ?
                         <>
                             <Toggle label="Required" onChanged={(evt) => this.setState({required: evt})} />
                             <Toggle label="Enforce Unique Values" onChanged={(evt) => this.setState({enforceUniqueValues: evt})} />
-                            <TextField label="Maximum number of characters" max={255} min={0} type="number" defaultValue="255" onChange={(evt: React.FormEvent<HTMLInputElement>) => { this.setState({ maxNoCharacters: +((evt.target as any).value) })}} />
-                            <TextField label="Default value" value={this.state.defaultValue} onChange={(evt: React.FormEvent<HTMLInputElement>) => { this.setState({ defaultValue: (evt.target as any).value })}} />
+                            <TextField label="Maximum number of characters" max={255} min={0} type="number" defaultValue="255" onChange={(evt: React.FormEvent<HTMLInputElement>) => { this.setState({ maxNoCharacters: +((evt.target as any).value) });}} />
+                            <TextField label="Default value" value={this.state.defaultValue} onChange={(evt: React.FormEvent<HTMLInputElement>) => { this.setState({ defaultValue: (evt.target as any).value });}} />
                         </> : null
                 }
                 {
@@ -458,9 +458,9 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                         <>
                             <Toggle label="Required" onChanged={(evt) => this.setState({required: evt})} />
                             <Toggle label="Allow unlimited length in document libraries" onChanged={(evt) => this.setState({allowUnlimitedLength: evt})} />
-                            <TextField label="Number of lines for editing" max={255} min={0} type="number" defaultValue="6" onChange={(evt: React.FormEvent<HTMLInputElement>) => { this.setState({ numberOfLinesForEditing: +((evt.target as any).value) })}} />
+                            <TextField label="Number of lines for editing" max={255} min={0} type="number" defaultValue="6" onChange={(evt: React.FormEvent<HTMLInputElement>) => { this.setState({ numberOfLinesForEditing: +((evt.target as any).value) });}} />
                             <Toggle label="Allow enhanced rich text" checked={this.state.allowRichText} onChanged={(evt) => {
-                                this.setState({allowRichText: evt})}
+                                this.setState({allowRichText: evt});}
                                 } /> 
                             <Toggle label="Append Changes to Existing Text" onChanged={(evt) => this.setState({appendChangesToExistingText: evt})} />
                         </> : null
@@ -471,16 +471,16 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                             <Toggle label="Required" onChanged={(evt) => this.setState({required: evt})} />
                             <Toggle label="Enforce Unique Values" onChanged={(evt) => this.setState({enforceUniqueValues: evt})} />
                             <TextField label="Minimum allowed value" type="number" onChange={(evt: React.FormEvent<HTMLInputElement>) => { 
-                                this.setState({ minValue: ((evt.target as any).valueAsNumber.toString().length == 0) ? null : (evt.target as any).valueAsNumber })}
+                                this.setState({ minValue: ((evt.target as any).valueAsNumber.toString().length == 0) ? null : (evt.target as any).valueAsNumber });}
                                 } />
                             <TextField label="Maximum allowed value" type="number" onChange={(evt: React.FormEvent<HTMLInputElement>) => { 
-                                this.setState({ maxValue: ((evt.target as any).valueAsNumber.toString().length == 0) ? null : (evt.target as any).valueAsNumber })}
+                                this.setState({ maxValue: ((evt.target as any).valueAsNumber.toString().length == 0) ? null : (evt.target as any).valueAsNumber });}
                                 } />
                             <Dropdown label="Number of decimal places" options={optionsDisplayFormat} defaultSelectedKey={this.state.displayFormat} onChanged={(evt: IDropdownOption) => {
-                                this.setState({displayFormat: +(evt.key)})}
+                                this.setState({displayFormat: +(evt.key)});}
                             }/>                        
                             <TextField label="Default value" type="number" onChange={(evt: React.FormEvent<HTMLInputElement>) => { 
-                                this.setState({ defaultValue: (evt.target as any).valueAsNumber.toString() })}
+                                this.setState({ defaultValue: (evt.target as any).valueAsNumber.toString() });}
                                 } />
                             <Toggle label="Show as percentage (for example, 50%)" onChanged={(evt) => this.setState({showAsPercentage: evt})} />
                         </> : null
@@ -508,10 +508,10 @@ Enter Choice #3`}
                                 }
                             />
                             <Dropdown label="Default value" defaultValue="(empty)" options={this.state.defaultValueChoices} onChanged={(evt: any) => {
-                                this.setState({defaultValue: evt.key})
+                                this.setState({defaultValue: evt.key});
                             }} />
                             <ChoiceGroup label="Display choices using" defaultSelectedKey={this.state.choiceFormat} options={choiceFieldFormatOptions} onChanged={(evt: any) => { 
-                                this.setState({choiceFormat: evt.key})
+                                this.setState({choiceFormat: evt.key});
                             }} />
                             <Toggle label="Allow 'Fill-in' choices" onChanged={(evt) => this.setState({choiceFillIn: evt})} />
                         </> : null
@@ -522,19 +522,19 @@ Enter Choice #3`}
                             <Toggle label="Required" onChanged={(evt) => this.setState({required: evt})} />
                             <Toggle label="Enforce Unique Values" onChanged={(evt) => this.setState({enforceUniqueValues: evt})} />
                             <Dropdown label="Currency" defaultSelectedKey={this.state.selectedCurrency} options={currencyOptions} onChanged={(evt: any) => {
-                                this.setState({selectedCurrency: evt.key})
+                                this.setState({selectedCurrency: evt.key});
                             }} />
                             <TextField label="Minimum allowed value" type="number" onChange={(evt: React.FormEvent<HTMLInputElement>) => { 
-                                this.setState({ minValue: ((evt.target as any).valueAsNumber.toString().length == 0) ? null : (evt.target as any).valueAsNumber })}
+                                this.setState({ minValue: ((evt.target as any).valueAsNumber.toString().length == 0) ? null : (evt.target as any).valueAsNumber });}
                                 } />
                             <TextField label="Maximum allowed value" type="number" onChange={(evt: React.FormEvent<HTMLInputElement>) => { 
-                                this.setState({ maxValue: ((evt.target as any).valueAsNumber.toString().length == 0) ? null : (evt.target as any).valueAsNumber })}
+                                this.setState({ maxValue: ((evt.target as any).valueAsNumber.toString().length == 0) ? null : (evt.target as any).valueAsNumber });}
                                 } />
                             <Dropdown label="Number of decimal places" options={optionsDisplayFormat} defaultSelectedKey={this.state.displayFormat} onChanged={(evt: IDropdownOption) => {
-                                this.setState({displayFormat: +(evt.key)})}
+                                this.setState({displayFormat: +(evt.key)});}
                             }/>                        
                             <TextField label="Default value" type="number" onChange={(evt: React.FormEvent<HTMLInputElement>) => { 
-                                this.setState({ defaultValue: (evt.target as any).valueAsNumber.toString() })}
+                                this.setState({ defaultValue: (evt.target as any).valueAsNumber.toString() });}
                                 } />
                         </> : null
                 }
@@ -542,7 +542,7 @@ Enter Choice #3`}
                     this.state.fieldType == FieldTypeKindEnum.Boolean ?
                     <>
                         <Dropdown label="Default value" options={[{key: '1', text: 'Yes'}, {key: '0', text: 'No'}]} defaultSelectedKey={this.state.defaultBooleanValueAsString} onChanged={(evt:any) => {
-                            this.setState({defaultBooleanValueAsString: evt.key})
+                            this.setState({defaultBooleanValueAsString: evt.key});
                         }} />
                     </>
                     : null
@@ -552,7 +552,7 @@ Enter Choice #3`}
                     <>
                         <Toggle label="Required" onChanged={(evt) => this.setState({required: evt})} />
                         <Dropdown label="Format URL as" options={[{key: 'Hyperlink', text: 'Hyperlink'}, {key: 'Image', text: 'Picture'}]} defaultSelectedKey={this.state.urlFieldFormat} onChanged={(evt:any) => {
-                            this.setState({urlFieldFormat: evt.key})
+                            this.setState({urlFieldFormat: evt.key});
                         }} />
                     </>
                     : null
@@ -563,10 +563,10 @@ Enter Choice #3`}
                         <Toggle label="Required" onChanged={(evt) => this.setState({required: evt})} />
                         <Toggle label="Enforce Unique Values" onChanged={(evt) => this.setState({enforceUniqueValues: evt})} />
                         <ChoiceGroup styles={{flexContainer: {display: "flex"}}} label="Date and Time Format" defaultSelectedKey={this.state.dateAndTimeFormat} options={[{key: "DateOnly", text: "Date Only\u00A0\u00A0"},{key: "DateTime", text: "Date & Time"}]} onChanged={(evt: any) => { 
-                                this.setState({dateAndTimeFormat: evt.key})
+                                this.setState({dateAndTimeFormat: evt.key});
                             }} />
                         <ChoiceGroup styles={{flexContainer: {display: "flex"}}} label="Display Format" defaultSelectedKey={this.state.friendlyDisplayFormat} options={[{key: "Disabled", text: "Standard\u00A0\u00A0"},{key: "Relative", text: "Friendly"}]} onChanged={(evt: any) => { 
-                                this.setState({friendlyDisplayFormat: evt.key})
+                                this.setState({friendlyDisplayFormat: evt.key});
                             }} />
                         <ChoiceGroup label="Default Value" defaultSelectedKey="None" options={[{key: "None", text: "(None)"},{key: "[today]", text: "Today's Date"}, {key: "Another", text: "Specified Date"}]} onChanged={(evt: any) => { 
                                 switch(evt.key){
@@ -580,7 +580,7 @@ Enter Choice #3`}
                                         this.setState({defaultValue: "", displayDefaultValueDTInput: true});
                                     break;
                                 }
-                                this.setState({dateAndTimeFormat: evt.key})
+                                this.setState({dateAndTimeFormat: evt.key});
                             }} />
                             {this.state.displayDefaultValueDTInput ? 
                                 <DatePicker 
@@ -604,10 +604,10 @@ Enter Choice #3`}
     }
     private _onFormatDate = (date: Date): string => {
         return date.getDate() + '/' + (date.getMonth() + 1) + '/' + (date.getFullYear() % 100);
-    };
+    }
 
     private _onSelectDate = (date: Date | null | undefined): void => {
         //Need to compensate the time difference between GMT and LocaleTime
         this.setState({defaultValue: (new Date(date.getTime() + Math.abs(date.getTimezoneOffset() * (-60000))).toISOString())});
-    };
+    }
 }

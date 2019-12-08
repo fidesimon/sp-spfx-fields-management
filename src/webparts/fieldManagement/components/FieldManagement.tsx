@@ -40,7 +40,7 @@ export class DataDetailedList{
 export default class FieldManagement extends React.Component<IFieldManagementProps, IFieldManagementState> {
   constructor(props){
     super(props);
-    this.state = { ListOfGroups: this.mockData, createFieldGroupName: '', isPanelOpened: false, isCreateFieldPanelOpen: false, fieldToDisplay: null, fieldsPlain: this.magicWithGroups(this.mockData)}
+    this.state = { ListOfGroups: this.mockData, createFieldGroupName: '', isPanelOpened: false, isCreateFieldPanelOpen: false, fieldToDisplay: null, fieldsPlain: this.magicWithGroups(this.mockData)};
     this.deleteField.bind(this);
   }
 
@@ -58,7 +58,7 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
     return {
       groups: groupz,
       items: items
-    }
+    };
   }
   
   mockData : Array<IGroup> = [
@@ -284,7 +284,7 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
     this.setState({ListOfGroups: currentItems});
   }
 
-  async deleteField(id, groupName) : Promise<any>{
+  protected async deleteField(id, groupName) : Promise<any>{
     console.log('delete field ', id);
     let context = this.props.context;
 
@@ -346,7 +346,7 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
       const value = obj[key];
       objectsByKeyValue[value] = (objectsByKeyValue[value] || []).concat(obj);
       return objectsByKeyValue;
-    }, {});
+    }, {})
 
   protected async _retrieveColumns(): Promise<any> {
     let context = this.props.context;

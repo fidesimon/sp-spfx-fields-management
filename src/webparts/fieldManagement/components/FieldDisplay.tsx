@@ -3,10 +3,10 @@ import SPField, { ISPField } from './SPField';
 
 export type FieldDisplayProps = {
     field: ISPField;
-}
+};
 
 export default class FieldDisplay extends React.Component<FieldDisplayProps, {}>{
-    render(){
+    public render(){
         const field = this.props.field;
         return (
             <div className="ms-Grid" dir="ltr">

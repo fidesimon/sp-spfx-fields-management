@@ -20,7 +20,7 @@ export interface IGroup{
     sortHandler: Function,
     fieldsAscending: boolean,
     deleteField: Function
-  }
+  };
 
   export class Group extends React.Component<GroupProps, {}> {
     public render(): React.ReactElement<GroupProps> {
