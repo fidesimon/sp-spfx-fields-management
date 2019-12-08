@@ -1,8 +1,9 @@
 import * as React from 'react';
 import styles from './FieldManagement.module.scss';
 import { IFieldManagementProps } from './IFieldManagementProps';
-import { Panel, PanelType, DetailsList } from 'office-ui-fabric-react';
+import { Panel, PanelType, DetailsList, GroupedList } from 'office-ui-fabric-react';
 import { IGroup, Group } from './Group';
+import { GroupList } from './GroupList';
 import FieldDisplay from './FieldDisplay';
 import FieldCreate from './FieldCreate';
 
@@ -262,26 +263,26 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
   }
 
   sortGroupFields = (groupName, ascending: boolean) => {
-    function compare(a, b) {
-      const val1 = a.Title.toUpperCase();
-      const val2 = b.Title.toUpperCase();
+    // function compare(a, b) {
+    //   const val1 = a.Title.toUpperCase();
+    //   const val2 = b.Title.toUpperCase();
     
-      let comparison = 0;
-      if (val1 > val2) {
-        comparison = ascending ? 1 : -1;
-      } else if (val1 < val2) {
-        comparison = ascending ? -1 : 1;
-      }
-      return comparison;
-    }
-    let currentItems = this.state.ListOfGroups;
-    currentItems.forEach((item)=>{
-      if(item.Name == groupName){
-        item.Fields.sort(compare);
-        item.Ascending = ascending;
-      }
-    });
-    this.setState({ListOfGroups: currentItems});
+    //   let comparison = 0;
+    //   if (val1 > val2) {
+    //     comparison = ascending ? 1 : -1;
+    //   } else if (val1 < val2) {
+    //     comparison = ascending ? -1 : 1;
+    //   }
+    //   return comparison;
+    // }
+    // let currentItems = this.state.ListOfGroups;
+    // currentItems.forEach((item)=>{
+    //   if(item.Name == groupName){
+    //     item.Fields.sort(compare);
+    //     item.Ascending = ascending;
+    //   }
+    // });
+    // this.setState({ListOfGroups: currentItems});
   }
 
   protected async deleteField(id, groupName) : Promise<any>{
@@ -328,7 +329,17 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
             <div className={styles.fieldTitle}>Field Title</div>
             <div className={styles.fieldType}>Field Type</div>
           </div>
-          {this.state.ListOfGroups.map(group => <Group key={group.Name} 
+          <GroupList groups={this.state.ListOfGroups}
+                      addFieldHandler={this.addFieldHandler}
+                      clickHandler={this.handleFieldClick}
+                      deleteFieldHandler={this.deleteField.bind(this)} />
+        </div>
+      </div>
+    );
+  }
+
+  /*
+{this.state.ListOfGroups.map(group => <Group key={group.Name} 
                                                         name={group.Name} 
                                                         fields={group.Fields} 
                                                         fieldsAscending={group.Ascending} 
@@ -336,10 +347,7 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
                                                         deleteField={this.deleteField.bind(this)} 
                                                         addFieldHandler={this.addFieldHandler} 
                                                         clickHandler={this.handleFieldClick} />)}
-        </div>
-      </div>
-    );
-  }
+  */
 
   protected groupBy = key => array =>
     array.reduce((objectsByKeyValue, obj) =>{
