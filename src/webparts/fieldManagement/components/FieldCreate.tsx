@@ -8,39 +8,39 @@ import { FieldTypeKindEnum } from './FieldTypeKindEnum';
 import { BaseComponentContext } from '@microsoft/sp-component-base';
 
 export interface FieldCreateProps {
-    group: string,
-    context: BaseComponentContext,
-    onItemSaved: Function,
-    closePanel: Function
+    group: string;
+    context: BaseComponentContext;
+    onItemSaved: Function;
+    closePanel: Function;
 }
 
 export interface FieldCreateState{
-    fieldType: number,
-    columnName: string,
-    internalName: string,
-    group: string,
-    description: string,
-    required: boolean,
-    enforceUniqueValues: boolean,
-    maxNoCharacters: number,
-    defaultValue: string,
-    numberOfLinesForEditing: number,
-    allowUnlimitedLength: boolean,
-    allowRichText: boolean,
-    appendChangesToExistingText: boolean,
-    minValue: number,
-    maxValue: number,
-    showAsPercentage: boolean,
-    displayFormat: number,
-    choices: string[],
-    choiceFormat: string,
-    choiceFillIn: boolean,
-    defaultValueChoices: IDropdownOption[],
-    selectedCurrency: string,
-    defaultBooleanValueAsString: string,
-    urlFieldFormat: string,
-    dateAndTimeFormat: string,
-    friendlyDisplayFormat: string,
+    fieldType: number;
+    columnName: string;
+    internalName: string;
+    group: string;
+    description: string;
+    required: boolean;
+    enforceUniqueValues: boolean;
+    maxNoCharacters: number;
+    defaultValue: string;
+    numberOfLinesForEditing: number;
+    allowUnlimitedLength: boolean;
+    allowRichText: boolean;
+    appendChangesToExistingText: boolean;
+    minValue: number;
+    maxValue: number;
+    showAsPercentage: boolean;
+    displayFormat: number;
+    choices: string[];
+    choiceFormat: string;
+    choiceFillIn: boolean;
+    defaultValueChoices: IDropdownOption[];
+    selectedCurrency: string;
+    defaultBooleanValueAsString: string;
+    urlFieldFormat: string;
+    dateAndTimeFormat: string;
+    friendlyDisplayFormat: string;
     displayDefaultValueDTInput: boolean
 }
 
@@ -215,11 +215,27 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                         Title: data.columnName,
                         StaticName: data.internalName,
                         InternalName: data.internalName,
-                        FieldTypeKind: FieldTypeKindEnum.Boolean,
+                        FieldTypeKind: FieldTypeKindEnum.URL,
                         Required: data.required,
                         Group: data.group,
                         Description: data.description,
                         SchemaXml: '<Field Type="URL" DisplayName="'+ data.columnName + '" Format="'+data.urlFieldFormat+'" Required="'+this.getUpperCaseStringForBool(data.required)+'" EnforceUniqueValues="FALSE" Description="'+data.description+'" Group="'+data.group+'" StaticName="'+data.internalName+'" Name="'+data.internalName+'"></Field>'
+                    }
+            break;
+            case FieldTypeKindEnum.DateTime:
+                    defaultString = data.defaultValue == "" ? "" : `<Default>${data.defaultValue}</Default>`;
+                    let additionalAttributesForToday = data.defaultValue == "[today]" ? `CustomFormatter="" CalType="0"` : ``;
+                    body = {
+                        "@odata.type": "#SP.FieldDateTime",
+                        Title: data.columnName,
+                        StaticName: data.internalName,
+                        InternalName: data.internalName,
+                        FieldTypeKind: FieldTypeKindEnum.DateTime,
+                        Required: data.required,
+                        EnforceUniqueValues: data.enforceUniqueValues,
+                        Group: data.group,
+                        Description: data.description,
+                        SchemaXml: `<Field Type="DateTime" DisplayName="${data.columnName}" Required="${this.getUpperCaseStringForBool(data.required)}" ${additionalAttributesForToday} EnforceUniqueValues="${this.getUpperCaseStringForBool(data.enforceUniqueValues)}" Format="${data.dateAndTimeFormat}" Group="${data.group}" FriendlyDisplayFormat="${data.friendlyDisplayFormat}" StaticName="${data.internalName}" Name="${data.internalName}">${defaultString}</Field>`
                     }
             break;
         }
@@ -552,13 +568,13 @@ Enter Choice #3`}
                         <ChoiceGroup styles={{flexContainer: {display: "flex"}}} label="Display Format" defaultSelectedKey={this.state.friendlyDisplayFormat} options={[{key: "Disabled", text: "Standard\u00A0\u00A0"},{key: "Relative", text: "Friendly"}]} onChanged={(evt: any) => { 
                                 this.setState({friendlyDisplayFormat: evt.key})
                             }} />
-                        <ChoiceGroup label="Default Value" defaultSelectedKey={this.state.defaultValue} options={[{key: "None", text: "(None)"},{key: "[Today]", text: "Today's Date"}, {key: "Another", text: "Specified Date"}]} onChanged={(evt: any) => { 
+                        <ChoiceGroup label="Default Value" defaultSelectedKey="None" options={[{key: "None", text: "(None)"},{key: "[today]", text: "Today's Date"}, {key: "Another", text: "Specified Date"}]} onChanged={(evt: any) => { 
                                 switch(evt.key){
                                     case "None":
                                         this.setState({defaultValue: "", displayDefaultValueDTInput: false});
                                     break;
-                                    case "[Today]":
-                                        this.setState({defaultValue: "[Today]", displayDefaultValueDTInput: false});
+                                    case "[today]":
+                                        this.setState({defaultValue: "[today]", displayDefaultValueDTInput: false});
                                     break;
                                     case "Another":
                                         this.setState({defaultValue: "", displayDefaultValueDTInput: true});
@@ -569,11 +585,15 @@ Enter Choice #3`}
                             {this.state.displayDefaultValueDTInput ? 
                                 <DatePicker 
                                 label="Enter Default Date" 
+                                defaultValue={this.state.selectedCurrency}
                                 allowTextInput={false} 
                                 firstDayOfWeek={DayOfWeek.Monday} 
                                 formatDate={this._onFormatDate}
+                                onSelectDate={this._onSelectDate}
+                                value={this.state.defaultValue == "" ? null : new Date(this.state.defaultValue)}
                                 />
-                            : null }
+                                : null
+                            }
                     </>
                     : null
                 }
@@ -583,8 +603,11 @@ Enter Choice #3`}
         );
     }
     private _onFormatDate = (date: Date): string => {
-        this.setState({defaultValue: date.toISOString()});
         return date.getDate() + '/' + (date.getMonth() + 1) + '/' + (date.getFullYear() % 100);
-      };
-}
+    };
 
+    private _onSelectDate = (date: Date | null | undefined): void => {
+        //Need to compensate the time difference between GMT and LocaleTime
+        this.setState({defaultValue: (new Date(date.getTime() + Math.abs(date.getTimezoneOffset() * (-60000))).toISOString())});
+    };
+}

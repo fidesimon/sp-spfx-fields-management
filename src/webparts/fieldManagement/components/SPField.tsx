@@ -6,7 +6,7 @@ export type SPFieldProps = {
     field: ISPField;
     clickHandler: Function;
     deleteField: Function;
-  }
+  };
 
 export default class SPField extends React.Component<SPFieldProps, {}>{
     constructor(props){
@@ -24,7 +24,8 @@ export default class SPField extends React.Component<SPFieldProps, {}>{
               this.props.field.CanBeDeleted ?
               <Icon iconName="Delete" style={{color: '#ff0000'}} onClick={(ev) => {
                 ev.stopPropagation();
-                this.props.deleteField(this.props.field.Id, this.props.field.Group)} 
+                this.props.deleteField(this.props.field.Id, this.props.field.Group);
+                }
               } />
               :
               <Icon iconName="Delete" style={{color: '#d8d8d8'}} />

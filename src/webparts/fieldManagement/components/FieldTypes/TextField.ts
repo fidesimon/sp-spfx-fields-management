@@ -6,15 +6,15 @@ export default class TextField{
         this["@odata.type"] = "#SP.Field";
         this.FieldTypeKind = FieldTypeKindEnum.Text;
     }
-    '@odata.type'?: string;
-    DefaultValue: string;
-    Description: string;
-    EnforceUniqueValues: boolean;
-    FieldTypeKind: number;
-    Group: string;
-    InternalName: string;
-    MaxLength: number;
-    Required: boolean;
-    StaticName: string;
-    Title: string;
+    public '@odata.type'?: string;
+    public DefaultValue: string;
+    public Description: string;
+    public EnforceUniqueValues: boolean;
+    public FieldTypeKind: number;
+    public Group: string;
+    public InternalName: string;
+    public MaxLength: number;
+    public Required: boolean;
+    public StaticName: string;
+    public Title: string;
 }
