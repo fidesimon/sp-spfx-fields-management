@@ -354,6 +354,19 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
 
     let response : SPHttpClientResponse = await context.spHttpClient.get(requestUrl, SPHttpClient.configurations.v1);
     
+    function compare(a, b) {
+      const val1 = a.Name.toUpperCase();
+      const val2 = b.Name.toUpperCase();
+    
+      let comparison = 0;
+      if (val1 > val2) {
+        comparison = 1;
+      } else if (val1 < val2) {
+        comparison = -1;
+      }
+      return comparison;
+    }
+
     if(response.ok){
       let responseJSON = await response.json();
       if(responseJSON != null && responseJSON.value != null){
@@ -365,6 +378,7 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
           let obj = refinedGroups[key];
           groupsArray.push({Name: key, Ascending: true, Fields: (obj as ISPField[])});
         }
+        groupsArray.sort(compare);
         this.setState({ListOfGroups: groupsArray});
       }
     }
