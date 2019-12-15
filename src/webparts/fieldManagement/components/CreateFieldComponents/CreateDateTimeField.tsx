@@ -27,7 +27,7 @@ export const CreateDateTimeField: React.FC<ICreateFieldProps> = (props) => {
             Title: columnName,
             StaticName: internalName,
             InternalName: internalName,
-            FieldTypeKind: FieldTypeKindEnum.DateTime,
+            FieldTypeKind: fieldType,
             Required: required,
             EnforceUniqueValues: enforceUniqueValues,
             DefaultValue: defaultValue,

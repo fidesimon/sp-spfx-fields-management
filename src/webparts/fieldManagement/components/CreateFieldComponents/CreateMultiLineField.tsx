@@ -23,7 +23,7 @@ export const CreateMultiLineField: React.FC<ICreateFieldProps> = (props) => {
             Title: columnName,
             StaticName: internalName,
             InternalName: internalName,
-            FieldTypeKind: FieldTypeKindEnum.Note,
+            FieldTypeKind: fieldType,
             Required: required,
             Group: group,
             Description: description,

@@ -23,7 +23,7 @@ export const CreateTextField: React.FC<ICreateFieldProps> = (props) => {
             Title: columnName,
             StaticName: internalName,
             InternalName: internalName,
-            FieldTypeKind: FieldTypeKindEnum.Text,
+            FieldTypeKind: fieldType,
             Required: required,
             EnforceUniqueValues: enforceUniqueValues,
             MaxLength: maxNoOfChars,

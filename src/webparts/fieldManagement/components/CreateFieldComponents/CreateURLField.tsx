@@ -20,7 +20,7 @@ export const CreateURLField: React.FC<ICreateFieldProps> = (props) => {
             Title: columnName,
             StaticName: internalName,
             InternalName: internalName,
-            FieldTypeKind: FieldTypeKindEnum.URL,
+            FieldTypeKind: fieldType,
             Required: required,
             Group: group,
             Description: description,
