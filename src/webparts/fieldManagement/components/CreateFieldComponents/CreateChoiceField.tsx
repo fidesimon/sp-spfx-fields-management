@@ -6,7 +6,7 @@ import { ICreateFieldProps } from './ICreateFieldProps';
 
 export const CreateChoiceField: React.FC<ICreateFieldProps> = (props) => {
     const [columnName, setColumnName] = React.useState("");
-    const [fieldType, setFieldType] = React.useState(FieldTypeKindEnum.Choice);
+    const fieldType = FieldTypeKindEnum.Choice;
     const [internalName, setInternalName] = React.useState("");
     const [group, setGroup] = React.useState(props.groupName);
     const [description, setDescription] = React.useState("");
@@ -27,7 +27,7 @@ export const CreateChoiceField: React.FC<ICreateFieldProps> = (props) => {
             Title: columnName,
             StaticName: internalName,
             InternalName: internalName,
-            FieldTypeKind: FieldTypeKindEnum.Choice,
+            FieldTypeKind: fieldType,
             Required: required,
             EnforceUniqueValues: enforceUniqueValues,
             DefaultValue: defaultValue,

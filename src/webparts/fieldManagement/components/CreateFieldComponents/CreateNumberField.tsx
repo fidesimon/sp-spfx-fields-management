@@ -6,7 +6,7 @@ import { ICreateFieldProps } from './ICreateFieldProps';
 
 export const CreateNumberField: React.FC<ICreateFieldProps> = (props) => {
     const [columnName, setColumnName] = React.useState("");
-    const [fieldType, setFieldType] = React.useState(FieldTypeKindEnum.Number);
+    const fieldType = FieldTypeKindEnum.Number;
     const [internalName, setInternalName] = React.useState("");
     const [group, setGroup] = React.useState(props.groupName);
     const [description, setDescription] = React.useState("");

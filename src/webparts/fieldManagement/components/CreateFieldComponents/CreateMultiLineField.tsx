@@ -6,7 +6,7 @@ import { ICreateFieldProps } from './ICreateFieldProps';
 
 export const CreateMultiLineField: React.FC<ICreateFieldProps> = (props) => {
     const [columnName, setColumnName] = React.useState("");
-    const [fieldType, setFieldType] = React.useState(FieldTypeKindEnum.Note);
+    const fieldType = FieldTypeKindEnum.Note;
     const [internalName, setInternalName] = React.useState("");
     const [group, setGroup] = React.useState(props.groupName);
     const [description, setDescription] = React.useState("");

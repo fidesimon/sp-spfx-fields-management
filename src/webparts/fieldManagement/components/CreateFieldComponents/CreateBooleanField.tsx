@@ -19,7 +19,7 @@ export const CreateBooleanField: React.FC<ICreateFieldProps> = (props) => {
             Title: columnName,
             StaticName: internalName,
             InternalName: internalName,
-            FieldTypeKind: FieldTypeKindEnum.Boolean,
+            FieldTypeKind: fieldType,
             Group: group,
             Description: description,
             SchemaXml: `<Field Type="Boolean" Description="${description}" DisplayName="${columnName}" Required="FALSE" EnforceUniqueValues="FALSE" Group="${group}" StaticName="${internalName}" Name="${internalName}"><Default>${defaultValue}</Default></Field>`
