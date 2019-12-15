@@ -10,6 +10,7 @@ import { CreateCurrencyField } from './CreateFieldComponents/CreateCurrencyField
 import { CreateChoiceField } from './CreateFieldComponents/CreateChoiceField';
 import { CreateBooleanField } from './CreateFieldComponents/CreateBooleanField';
 import { CreateURLField } from './CreateFieldComponents/CreateURLField';
+import { CreateDateTimeField } from './CreateFieldComponents/CreateDateTimeField';
 import { ISPField } from './SPField';
 import { FieldTypeKindEnum } from './FieldTypeKindEnum';
 import { BaseComponentContext } from '@microsoft/sp-component-base';
@@ -98,22 +99,6 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
         let body: ISPField;
         let defaultString: string = '';
         switch(this.state.fieldType){
-            case FieldTypeKindEnum.DateTime:
-                    defaultString = data.defaultValue == "" ? "" : `<Default>${data.defaultValue}</Default>`;
-                    let additionalAttributesForToday = data.defaultValue == "[today]" ? `CustomFormatter="" CalType="0"` : ``;
-                    body = {
-                        "@odata.type": "#SP.FieldDateTime",
-                        Title: data.columnName,
-                        StaticName: data.internalName,
-                        InternalName: data.internalName,
-                        FieldTypeKind: FieldTypeKindEnum.DateTime,
-                        Required: data.required,
-                        EnforceUniqueValues: data.enforceUniqueValues,
-                        Group: data.group,
-                        Description: data.description,
-                        SchemaXml: `<Field Type="DateTime" DisplayName="${data.columnName}" Required="${this.getUpperCaseStringForBool(data.required)}" ${additionalAttributesForToday} EnforceUniqueValues="${this.getUpperCaseStringForBool(data.enforceUniqueValues)}" Format="${data.dateAndTimeFormat}" Group="${data.group}" FriendlyDisplayFormat="${data.friendlyDisplayFormat}" StaticName="${data.internalName}" Name="${data.internalName}">${defaultString}</Field>`
-                    };
-            break;
         }
         
         await this.createNewField(body);
@@ -195,62 +180,17 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                     <CreateURLField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} />
                     : null
                 }
+                {
+                    this.state.fieldType == FieldTypeKindEnum.DateTime ? 
+                    <CreateDateTimeField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} />
+                    : null
+                }
                 <TextField label="Column Name" id="columnName" required value={this.state.columnName} onKeyUp={() => this.generateInternalName()} />
                 <Dropdown label="Field Type" options={options} defaultSelectedKey={this.state.fieldType} onChanged={(evt: any) => this.setState({fieldType: evt.key})} />
                 <TextField label="Internal Name" required value={this.state.internalName} onKeyUp={(evt) => this.setState({internalName: (evt.target as HTMLInputElement).value})} />
                 <TextField label="Group" defaultValue={this.props.group} onChange={(evt: React.FormEvent<HTMLInputElement>) => { this.setState({ group: (evt.target as any).value });}} />
                 <TextField label="Description" name="columnName" multiline autoAdjustHeight onChange={(evt: React.FormEvent<HTMLTextAreaElement>) => { this.setState({ description: (evt.target as any).value });}} />
-                {
-                    this.state.fieldType == FieldTypeKindEnum.DateTime ?
-                    <>
-                        <Toggle label="Required" onChanged={(evt) => this.setState({required: evt})} />
-                        <Toggle label="Enforce Unique Values" onChanged={(evt) => this.setState({enforceUniqueValues: evt})} />
-                        <ChoiceGroup styles={{flexContainer: {display: "flex"}}} label="Date and Time Format" defaultSelectedKey={this.state.dateAndTimeFormat} options={[{key: "DateOnly", text: "Date Only\u00A0\u00A0"},{key: "DateTime", text: "Date & Time"}]} onChanged={(evt: any) => { 
-                                this.setState({dateAndTimeFormat: evt.key});
-                            }} />
-                        <ChoiceGroup styles={{flexContainer: {display: "flex"}}} label="Display Format" defaultSelectedKey={this.state.friendlyDisplayFormat} options={[{key: "Disabled", text: "Standard\u00A0\u00A0"},{key: "Relative", text: "Friendly"}]} onChanged={(evt: any) => { 
-                                this.setState({friendlyDisplayFormat: evt.key});
-                            }} />
-                        <ChoiceGroup label="Default Value" defaultSelectedKey="None" options={[{key: "None", text: "(None)"},{key: "[today]", text: "Today's Date"}, {key: "Another", text: "Specified Date"}]} onChanged={(evt: any) => { 
-                                switch(evt.key){
-                                    case "None":
-                                        this.setState({defaultValue: "", displayDefaultValueDTInput: false});
-                                    break;
-                                    case "[today]":
-                                        this.setState({defaultValue: "[today]", displayDefaultValueDTInput: false});
-                                    break;
-                                    case "Another":
-                                        this.setState({defaultValue: "", displayDefaultValueDTInput: true});
-                                    break;
-                                }
-                                this.setState({dateAndTimeFormat: evt.key});
-                            }} />
-                            {this.state.displayDefaultValueDTInput ? 
-                                <DatePicker 
-                                label="Enter Default Date" 
-                                defaultValue={this.state.selectedCurrency}
-                                allowTextInput={false} 
-                                firstDayOfWeek={DayOfWeek.Monday} 
-                                formatDate={this._onFormatDate}
-                                onSelectDate={this._onSelectDate}
-                                value={this.state.defaultValue == "" ? null : new Date(this.state.defaultValue)}
-                                />
-                                : null
-                            }
-                    </>
-                    : null
-                }
-            <br /><PrimaryButton text="Save" onClick={() => this.createFieldHandler()} />
-                <Button text="Cancel" onClick={() => this.props.closePanel()} />
             </>
         );
-    }
-    private _onFormatDate = (date: Date): string => {
-        return date.getDate() + '/' + (date.getMonth() + 1) + '/' + (date.getFullYear() % 100);
-    }
-
-    private _onSelectDate = (date: Date | null | undefined): void => {
-        //Need to compensate the time difference between GMT and LocaleTime
-        this.setState({defaultValue: (new Date(date.getTime() + Math.abs(date.getTimezoneOffset() * (-60000))).toISOString())});
     }
 }
