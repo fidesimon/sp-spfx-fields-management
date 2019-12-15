@@ -9,6 +9,7 @@ import { CreateNumberField } from './CreateFieldComponents/CreateNumberField';
 import { CreateCurrencyField } from './CreateFieldComponents/CreateCurrencyField';
 import { CreateChoiceField } from './CreateFieldComponents/CreateChoiceField';
 import { CreateBooleanField } from './CreateFieldComponents/CreateBooleanField';
+import { CreateURLField } from './CreateFieldComponents/CreateURLField';
 import { ISPField } from './SPField';
 import { FieldTypeKindEnum } from './FieldTypeKindEnum';
 import { BaseComponentContext } from '@microsoft/sp-component-base';
@@ -97,19 +98,6 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
         let body: ISPField;
         let defaultString: string = '';
         switch(this.state.fieldType){
-            case FieldTypeKindEnum.URL:
-                    body = {
-                        "@odata.type": "#SP.FieldUrl",
-                        Title: data.columnName,
-                        StaticName: data.internalName,
-                        InternalName: data.internalName,
-                        FieldTypeKind: FieldTypeKindEnum.URL,
-                        Required: data.required,
-                        Group: data.group,
-                        Description: data.description,
-                        SchemaXml: '<Field Type="URL" DisplayName="'+ data.columnName + '" Format="'+data.urlFieldFormat+'" Required="'+this.getUpperCaseStringForBool(data.required)+'" EnforceUniqueValues="FALSE" Description="'+data.description+'" Group="'+data.group+'" StaticName="'+data.internalName+'" Name="'+data.internalName+'"></Field>'
-                    };
-            break;
             case FieldTypeKindEnum.DateTime:
                     defaultString = data.defaultValue == "" ? "" : `<Default>${data.defaultValue}</Default>`;
                     let additionalAttributesForToday = data.defaultValue == "[today]" ? `CustomFormatter="" CalType="0"` : ``;
@@ -202,21 +190,16 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                     <CreateBooleanField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} />
                     : null
                 }
+                {
+                    this.state.fieldType == FieldTypeKindEnum.URL ? 
+                    <CreateURLField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} />
+                    : null
+                }
                 <TextField label="Column Name" id="columnName" required value={this.state.columnName} onKeyUp={() => this.generateInternalName()} />
                 <Dropdown label="Field Type" options={options} defaultSelectedKey={this.state.fieldType} onChanged={(evt: any) => this.setState({fieldType: evt.key})} />
                 <TextField label="Internal Name" required value={this.state.internalName} onKeyUp={(evt) => this.setState({internalName: (evt.target as HTMLInputElement).value})} />
                 <TextField label="Group" defaultValue={this.props.group} onChange={(evt: React.FormEvent<HTMLInputElement>) => { this.setState({ group: (evt.target as any).value });}} />
                 <TextField label="Description" name="columnName" multiline autoAdjustHeight onChange={(evt: React.FormEvent<HTMLTextAreaElement>) => { this.setState({ description: (evt.target as any).value });}} />
-                {
-                    this.state.fieldType == FieldTypeKindEnum.URL ? 
-                    <>
-                        <Toggle label="Required" onChanged={(evt) => this.setState({required: evt})} />
-                        <Dropdown label="Format URL as" options={[{key: 'Hyperlink', text: 'Hyperlink'}, {key: 'Image', text: 'Picture'}]} defaultSelectedKey={this.state.urlFieldFormat} onChanged={(evt:any) => {
-                            this.setState({urlFieldFormat: evt.key});
-                        }} />
-                    </>
-                    : null
-                }
                 {
                     this.state.fieldType == FieldTypeKindEnum.DateTime ?
                     <>
