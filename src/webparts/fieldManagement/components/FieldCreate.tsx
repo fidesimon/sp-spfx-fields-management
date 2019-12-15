@@ -181,25 +181,6 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
             { key: FieldTypeKindEnum.Calculated , text: 'Calculated (calculation based on other columns)', disabled: true }
           ];
 
-          const choiceFieldFormatOptions: IChoiceGroupOption[] = [
-            {
-              key: 'Dropdown',
-              text: 'Drop-Down Menu',
-            },
-            {
-              key: 'RadioButtons',
-              text: 'Radio Buttons'
-            },
-            {
-              key: 'CheckBoxes',
-              text: 'Checkboxes (allow multiple selection)',
-              disabled: true
-            }
-          ];
-
-          const distinct = (value, index, self) => {
-              return self.indexOf(value) === index;
-          };
         return (
             <>
                 {
