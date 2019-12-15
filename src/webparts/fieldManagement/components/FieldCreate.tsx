@@ -7,6 +7,7 @@ import { CreateTextField } from './CreateFieldComponents/CreateTextField';
 import { CreateMultiLineField } from './CreateFieldComponents/CreateMultiLineField';
 import { CreateNumberField } from './CreateFieldComponents/CreateNumberField';
 import { CreateCurrencyField } from './CreateFieldComponents/CreateCurrencyField';
+import { CreateChoiceField } from './CreateFieldComponents/CreateChoiceField';
 import { ISPField } from './SPField';
 import { FieldTypeKindEnum } from './FieldTypeKindEnum';
 import { BaseComponentContext } from '@microsoft/sp-component-base';
@@ -95,23 +96,6 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
         let body: ISPField;
         let defaultString: string = '';
         switch(this.state.fieldType){
-            case FieldTypeKindEnum.Choice:
-                let choicesString = `<CHOICES><CHOICE>${this.state.choices.join("</CHOICE><CHOICE>")}</CHOICE></CHOICES>`;
-                let defaultChoiceValueString = (this.state.defaultValue == null || this.state.defaultValue == '') ? '' : `<Default>${this.state.defaultValue}</Default>`;
-                body = {
-                    "@odata.type": "#SP.FieldChoice",
-                    Title: data.columnName,
-                    StaticName: data.internalName,
-                    InternalName: data.internalName,
-                    FieldTypeKind: FieldTypeKindEnum.Choice,
-                    Required: data.required,
-                    Group: data.group,
-                    DefaultValue: data.defaultValue,
-                    EnforceUniqueValues: data.enforceUniqueValues,
-                    Description: data.description,
-                    SchemaXml: `<Field Type="Choice" DisplayName="${data.columnName}" StaticName="${data.internalName}" Description="${data.description}"  Name="${data.internalName}" Group="${data.group}" Format="${data.choiceFormat}" FillInChoice="${this.getUpperCaseStringForBool(data.choiceFillIn)}" Required="${this.getUpperCaseStringForBool(data.required)}" EnforceUniqueValues="${this.getUpperCaseStringForBool(data.enforceUniqueValues)}" >${defaultChoiceValueString}${choicesString}</Field>`
-                };
-                break;
             case FieldTypeKindEnum.Boolean:
                     body = {
                         "@odata.type": "#SP.Field",
@@ -238,42 +222,16 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                     <CreateCurrencyField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} />
                     : null
                 }
+                {
+                    this.state.fieldType == FieldTypeKindEnum.Choice ? 
+                    <CreateChoiceField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} />
+                    : null
+                }
                 <TextField label="Column Name" id="columnName" required value={this.state.columnName} onKeyUp={() => this.generateInternalName()} />
                 <Dropdown label="Field Type" options={options} defaultSelectedKey={this.state.fieldType} onChanged={(evt: any) => this.setState({fieldType: evt.key})} />
                 <TextField label="Internal Name" required value={this.state.internalName} onKeyUp={(evt) => this.setState({internalName: (evt.target as HTMLInputElement).value})} />
                 <TextField label="Group" defaultValue={this.props.group} onChange={(evt: React.FormEvent<HTMLInputElement>) => { this.setState({ group: (evt.target as any).value });}} />
                 <TextField label="Description" name="columnName" multiline autoAdjustHeight onChange={(evt: React.FormEvent<HTMLTextAreaElement>) => { this.setState({ description: (evt.target as any).value });}} />
-                {
-                    this.state.fieldType == FieldTypeKindEnum.Choice ?
-                        <>
-                            <Toggle label="Required" onChanged={(evt) => this.setState({required: evt})} />
-                            <Toggle label="Enforce Unique Values" onChanged={(evt) => this.setState({enforceUniqueValues: evt})} />
-                            <TextField 
-                                label="Type each choice on a separate line" 
-                                defaultValue={`Enter Choice #1
-Enter Choice #2
-Enter Choice #3`} 
-                                multiline 
-                                autoAdjustHeight 
-                                onChange={(choices: React.FormEvent<HTMLTextAreaElement>) => { 
-                                        let distinctChoices = (choices.target as any).value.split('\n').filter(n => n!= '').filter(distinct);
-                                        let defaultValueChoices: IDropdownOption[] = distinctChoices.map((item)=>{
-                                            return {key: item, text: item};
-                                        });
-                                        defaultValueChoices.unshift({key: '', text: '(empty)', isSelected: true});
-                                        this.setState({choices: distinctChoices, defaultValueChoices: defaultValueChoices});
-                                    } 
-                                }
-                            />
-                            <Dropdown label="Default value" defaultValue="(empty)" options={this.state.defaultValueChoices} onChanged={(evt: any) => {
-                                this.setState({defaultValue: evt.key});
-                            }} />
-                            <ChoiceGroup label="Display choices using" defaultSelectedKey={this.state.choiceFormat} options={choiceFieldFormatOptions} onChanged={(evt: any) => { 
-                                this.setState({choiceFormat: evt.key});
-                            }} />
-                            <Toggle label="Allow 'Fill-in' choices" onChanged={(evt) => this.setState({choiceFillIn: evt})} />
-                        </> : null
-                }
                 {
                     this.state.fieldType == FieldTypeKindEnum.Boolean ?
                     <>
