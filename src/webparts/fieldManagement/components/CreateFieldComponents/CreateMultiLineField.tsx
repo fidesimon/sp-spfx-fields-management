@@ -1,17 +1,10 @@
 import * as React from 'react';
-import { PrimaryButton, Button, Dropdown, IDropdownOption, TextField, Toggle } from 'office-ui-fabric-react';
+import { PrimaryButton, Button, Dropdown, TextField, Toggle } from 'office-ui-fabric-react';
 import { FieldTypeKindEnum } from '../FieldTypeKindEnum';
 import { ISPField } from '../SPField';
+import { ICreateFieldProps } from './ICreateFieldProps';
 
-export interface CreateMultiLineFieldProps {
-    fieldTypeOptions: IDropdownOption[];
-    saveButtonHandler: Function;
-    cancelButtonHandler: Function;
-    groupName: string;
-    onFieldTypeChange: Function;
-}
-
-export const CreateMultiLineField: React.FC<CreateMultiLineFieldProps> = (props) => {
+export const CreateMultiLineField: React.FC<ICreateFieldProps> = (props) => {
     const [columnName, setColumnName] = React.useState("");
     const [fieldType, setFieldType] = React.useState(FieldTypeKindEnum.Note);
     const [internalName, setInternalName] = React.useState("");

@@ -2,16 +2,9 @@ import * as React from 'react';
 import { PrimaryButton, Button, Dropdown, IDropdownOption, TextField, Toggle, ChoiceGroup, IChoiceGroupOption } from 'office-ui-fabric-react';
 import { FieldTypeKindEnum } from '../FieldTypeKindEnum';
 import { ISPField } from '../SPField';
+import { ICreateFieldProps } from './ICreateFieldProps';
 
-export interface CreateChoiceFieldProps {
-    fieldTypeOptions: IDropdownOption[];
-    saveButtonHandler: Function;
-    cancelButtonHandler: Function;
-    groupName: string;
-    onFieldTypeChange: Function;
-}
-
-export const CreateChoiceField: React.FC<CreateChoiceFieldProps> = (props) => {
+export const CreateChoiceField: React.FC<ICreateFieldProps> = (props) => {
     const [columnName, setColumnName] = React.useState("");
     const [fieldType, setFieldType] = React.useState(FieldTypeKindEnum.Choice);
     const [internalName, setInternalName] = React.useState("");

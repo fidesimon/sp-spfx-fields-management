@@ -1,19 +1,12 @@
 import * as React from 'react';
-import { PrimaryButton, Button, Dropdown, IDropdownOption, TextField, Toggle } from 'office-ui-fabric-react';
+import { PrimaryButton, Button, Dropdown, TextField, IDropdownOption } from 'office-ui-fabric-react';
 import { FieldTypeKindEnum } from '../FieldTypeKindEnum';
 import { ISPField } from '../SPField';
+import { ICreateFieldProps } from './ICreateFieldProps';
 
-export interface CreateBooleanFieldProps {
-    fieldTypeOptions: IDropdownOption[];
-    saveButtonHandler: Function;
-    cancelButtonHandler: Function;
-    groupName: string;
-    onFieldTypeChange: Function;
-}
-
-export const CreateBooleanField: React.FC<CreateBooleanFieldProps> = (props) => {
+export const CreateBooleanField: React.FC<ICreateFieldProps> = (props) => {
     const [columnName, setColumnName] = React.useState("");
-    const [fieldType, setFieldType] = React.useState(FieldTypeKindEnum.Boolean);
+    const fieldType = FieldTypeKindEnum.Boolean;
     const [internalName, setInternalName] = React.useState("");
     const [group, setGroup] = React.useState(props.groupName);
     const [description, setDescription] = React.useState("");
@@ -35,6 +28,11 @@ export const CreateBooleanField: React.FC<CreateBooleanFieldProps> = (props) => 
         props.saveButtonHandler(body);
     }
 
+    const defaultValueOptions: IDropdownOption[] = [
+        {key: 1, text: 'Yes'}, 
+        {key: 0, text: 'No'}
+    ];
+
     return (
             <>
                 <TextField label="Column Name" required value={columnName} onChanged={(evt) => {
@@ -46,7 +44,7 @@ export const CreateBooleanField: React.FC<CreateBooleanFieldProps> = (props) => 
                 <TextField label="Internal Name" required value={internalName} onChanged={(evt) => { setInternalName(evt)}} />
                 <TextField label="Group" defaultValue={group} onChange={(evt: React.FormEvent<HTMLInputElement>) => { setGroup((evt.target as any).value);}} />
                 <TextField label="Description" multiline autoAdjustHeight onChange={(evt: React.FormEvent<HTMLTextAreaElement>) => { setDescription((evt.target as any).value )}} />
-                <Dropdown label="Default value" options={[{key: 1, text: 'Yes'}, {key: 0, text: 'No'}]} defaultSelectedKey={defaultValue} onChanged={(evt:any) => {
+                <Dropdown label="Default value" options={defaultValueOptions} defaultSelectedKey={defaultValue} onChanged={(evt:any) => {
                     setDefaultValue(evt.key);
                 }} />
                 <br />

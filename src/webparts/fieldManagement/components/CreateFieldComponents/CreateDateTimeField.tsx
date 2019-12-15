@@ -1,17 +1,10 @@
 import * as React from 'react';
-import { PrimaryButton, Button, Dropdown, IDropdownOption, TextField, Toggle, ChoiceGroup, DatePicker, DayOfWeek, IChoiceGroupOption } from 'office-ui-fabric-react';
+import { PrimaryButton, Button, Dropdown, TextField, Toggle, ChoiceGroup, DatePicker, DayOfWeek, IChoiceGroupOption } from 'office-ui-fabric-react';
 import { FieldTypeKindEnum } from '../FieldTypeKindEnum';
 import { ISPField } from '../SPField';
+import { ICreateFieldProps } from './ICreateFieldProps';
 
-export interface CreateDateTimeFieldProps {
-    fieldTypeOptions: IDropdownOption[];
-    saveButtonHandler: Function;
-    cancelButtonHandler: Function;
-    groupName: string;
-    onFieldTypeChange: Function;
-}
-
-export const CreateDateTimeField: React.FC<CreateDateTimeFieldProps> = (props) => {
+export const CreateDateTimeField: React.FC<ICreateFieldProps> = (props) => {
     const [columnName, setColumnName] = React.useState("");
     const [fieldType, setFieldType] = React.useState(FieldTypeKindEnum.DateTime);
     const [internalName, setInternalName] = React.useState("");

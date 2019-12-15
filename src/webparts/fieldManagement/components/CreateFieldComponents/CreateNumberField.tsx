@@ -2,16 +2,9 @@ import * as React from 'react';
 import { PrimaryButton, Button, Dropdown, IDropdownOption, TextField, Toggle } from 'office-ui-fabric-react';
 import { FieldTypeKindEnum } from '../FieldTypeKindEnum';
 import { ISPField } from '../SPField';
+import { ICreateFieldProps } from './ICreateFieldProps';
 
-export interface CreateNumberFieldProps {
-    fieldTypeOptions: IDropdownOption[];
-    saveButtonHandler: Function;
-    cancelButtonHandler: Function;
-    groupName: string;
-    onFieldTypeChange: Function;
-}
-
-export const CreateNumberField: React.FC<CreateNumberFieldProps> = (props) => {
+export const CreateNumberField: React.FC<ICreateFieldProps> = (props) => {
     const [columnName, setColumnName] = React.useState("");
     const [fieldType, setFieldType] = React.useState(FieldTypeKindEnum.Number);
     const [internalName, setInternalName] = React.useState("");
