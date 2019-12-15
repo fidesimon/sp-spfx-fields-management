@@ -5,6 +5,7 @@ import { PrimaryButton, Button, Dropdown, IDropdownOption, FacepileBase, IChoice
 import { ISPHttpClientOptions, SPHttpClientResponse, SPHttpClient } from '@microsoft/sp-http';
 import { CreateTextField } from './CreateFieldComponents/CreateTextField';
 import { CreateMultiLineField } from './CreateFieldComponents/CreateMultiLineField';
+import { CreateNumberField } from './CreateFieldComponents/CreateNumberField';
 import { ISPField } from './SPField';
 import { FieldTypeKindEnum } from './FieldTypeKindEnum';
 import { BaseComponentContext } from '@microsoft/sp-component-base';
@@ -454,6 +455,11 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                 {
                     this.state.fieldType == FieldTypeKindEnum.Note ? 
                     <CreateMultiLineField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} />
+                    : null
+                }
+                {
+                    this.state.fieldType == FieldTypeKindEnum.Number ? 
+                    <CreateNumberField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} />
                     : null
                 }
                 <TextField label="Column Name" id="columnName" required value={this.state.columnName} onKeyUp={() => this.generateInternalName()} />
