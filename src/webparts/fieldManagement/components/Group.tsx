@@ -32,9 +32,9 @@ export const Group: React.FC<GroupProps> = (props) => {
       const val2 = b.Title.toUpperCase();
     
       let comparison = 0;
-      if (val1 < val2)
+      if (val1 > val2)
         comparison = ascending ? 1 : -1;
-      else if (val1 > val2)
+      else if (val1 < val2)
         comparison = ascending ? -1 : 1;
       return comparison;
     }
@@ -49,7 +49,7 @@ export const Group: React.FC<GroupProps> = (props) => {
     <div className={styles.container}>
       <div className={styles.groupHeader}>
         <div className={styles.groupName}>
-          <div className={styles.sort} onClick={()=>sortGroupFields(ascendingSort)}>
+          <div className={styles.sort} onClick={()=>sortGroupFields(!ascendingSort)}>
             {ascendingSort ? 
               <Icon iconName="Ascending" className={styles.sortingIcon} />
               :

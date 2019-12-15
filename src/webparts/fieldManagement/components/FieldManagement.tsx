@@ -263,26 +263,26 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
   }
 
   sortGroupFields = (groupName, ascending: boolean) => {
-    // function compare(a, b) {
-    //   const val1 = a.Title.toUpperCase();
-    //   const val2 = b.Title.toUpperCase();
+    function compare(a, b) {
+      const val1 = a.Title.toUpperCase();
+      const val2 = b.Title.toUpperCase();
     
-    //   let comparison = 0;
-    //   if (val1 > val2) {
-    //     comparison = ascending ? 1 : -1;
-    //   } else if (val1 < val2) {
-    //     comparison = ascending ? -1 : 1;
-    //   }
-    //   return comparison;
-    // }
-    // let currentItems = this.state.ListOfGroups;
-    // currentItems.forEach((item)=>{
-    //   if(item.Name == groupName){
-    //     item.Fields.sort(compare);
-    //     item.Ascending = ascending;
-    //   }
-    // });
-    // this.setState({ListOfGroups: currentItems});
+      let comparison = 0;
+      if (val1 > val2) {
+        comparison = ascending ? 1 : -1;
+      } else if (val1 < val2) {
+        comparison = ascending ? -1 : 1;
+      }
+      return comparison;
+    }
+    let currentItems = this.state.ListOfGroups;
+    currentItems.forEach((item)=>{
+      if(item.Name == groupName){
+        item.Fields.sort(compare);
+        item.Ascending = ascending;
+      }
+    });
+    this.setState({ListOfGroups: currentItems});
   }
 
   protected async deleteField(id, groupName) : Promise<any>{

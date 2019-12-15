@@ -3,6 +3,7 @@ import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { Toggle } from 'office-ui-fabric-react/lib/Toggle';
 import { PrimaryButton, Button, Dropdown, IDropdownOption, FacepileBase, IChoiceGroupOption, ChoiceGroup, IDropdown, DatePicker, DayOfWeek } from 'office-ui-fabric-react';
 import { ISPHttpClientOptions, SPHttpClientResponse, SPHttpClient } from '@microsoft/sp-http';
+import { CreateTextField } from './CreateFieldComponents/CreateTextField';
 import { ISPField } from './SPField';
 import { FieldTypeKindEnum } from './FieldTypeKindEnum';
 import { BaseComponentContext } from '@microsoft/sp-component-base';
@@ -87,7 +88,6 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
     private getUpperCaseStringForBool = (value: boolean) => value.toString().toUpperCase();
 
     protected async createFieldHandler(): Promise<any>{
-        let context = this.props.context;
         let data = this.state;
         let body: ISPField;
         let minString: string = '';
@@ -240,13 +240,19 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
             break;
         }
         
+        await this.createNewField(body);
+    }
+
+    protected async createNewField(body: ISPField): Promise<any>{
+        let context = this.props.context;
+
         let bodyStr = JSON.stringify(body);
-        const h2 = new Headers();
-        h2.append("Accept", "application/json;odata.metadata=full");
-        h2.append("Content-type", "application/json;odata.metadata=full");
+        const headers = new Headers();
+        headers.append("Accept", "application/json;odata.metadata=full");
+        headers.append("Content-type", "application/json;odata.metadata=full");
     
         const optUpdate1: ISPHttpClientOptions = {
-            headers: h2,
+            headers: headers,
             body: bodyStr
         };
         let response = await context.spHttpClient.post(context.pageContext.web.absoluteUrl + `/_api/web/fields`, SPHttpClient.configurations.v1, optUpdate1);
@@ -439,13 +445,18 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
           };
         return (
             <>
+                {
+                    this.state.fieldType == FieldTypeKindEnum.Text ? 
+                    <CreateTextField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} />
+                    : null
+                }
                 <TextField label="Column Name" id="columnName" required value={this.state.columnName} onKeyUp={() => this.generateInternalName()} />
                 <Dropdown label="Field Type" options={options} defaultSelectedKey={this.state.fieldType} onChanged={(evt: any) => this.setState({fieldType: evt.key})} />
                 <TextField label="Internal Name" required value={this.state.internalName} onKeyUp={(evt) => this.setState({internalName: (evt.target as HTMLInputElement).value})} />
                 <TextField label="Group" defaultValue={this.props.group} onChange={(evt: React.FormEvent<HTMLInputElement>) => { this.setState({ group: (evt.target as any).value });}} />
                 <TextField label="Description" name="columnName" multiline autoAdjustHeight onChange={(evt: React.FormEvent<HTMLTextAreaElement>) => { this.setState({ description: (evt.target as any).value });}} />
                 { 
-                    this.state.fieldType == FieldTypeKindEnum.Text ?
+                    this.state.fieldType == 223 ?
                         <>
                             <Toggle label="Required" onChanged={(evt) => this.setState({required: evt})} />
                             <Toggle label="Enforce Unique Values" onChanged={(evt) => this.setState({enforceUniqueValues: evt})} />
