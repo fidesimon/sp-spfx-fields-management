@@ -8,11 +8,12 @@ export interface CreateMultiLineFieldProps {
     saveButtonHandler: Function;
     cancelButtonHandler: Function;
     groupName: string;
+    onFieldTypeChange: Function;
 }
 
 export const CreateMultiLineField: React.FC<CreateMultiLineFieldProps> = (props) => {
     const [columnName, setColumnName] = React.useState("");
-    const [fieldType, setFieldType] = React.useState(props.fieldTypeOptions[0].key);
+    const [fieldType, setFieldType] = React.useState(FieldTypeKindEnum.Note);
     const [internalName, setInternalName] = React.useState("");
     const [group, setGroup] = React.useState(props.groupName);
     const [description, setDescription] = React.useState("");
@@ -63,7 +64,7 @@ export const CreateMultiLineField: React.FC<CreateMultiLineFieldProps> = (props)
                     let newValue = evt.replace(/[^A-Z0-9]+/ig, "");
                     setInternalName(newValue.length >= 32 ? newValue.substr(0, 32) : newValue);
                 }} />
-                <Dropdown label="Field Type" options={props.fieldTypeOptions} defaultSelectedKey={fieldType} onChanged={(evt: any) => { setFieldType(evt.key)}} />
+                <Dropdown label="Field Type" options={props.fieldTypeOptions} defaultSelectedKey={fieldType} onChanged={(evt: any) => { props.onFieldTypeChange(evt.key)}} />
                 <TextField label="Internal Name" required value={internalName} onChanged={(evt) => { setInternalName(evt)}} />
                 <TextField label="Group" defaultValue={group} onChange={(evt: React.FormEvent<HTMLInputElement>) => { setGroup((evt.target as any).value);}} />
                 <TextField label="Description" multiline autoAdjustHeight onChange={(evt: React.FormEvent<HTMLTextAreaElement>) => { setDescription((evt.target as any).value )}} />

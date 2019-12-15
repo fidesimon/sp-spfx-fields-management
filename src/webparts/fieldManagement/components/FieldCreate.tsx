@@ -123,6 +123,10 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
         }
     }
 
+    protected changeFieldType(fieldType: FieldTypeKindEnum){
+        this.setState({fieldType: fieldType});
+    }
+
     // Comment for rendering part: There are components with the following logic:
     // (evt.toString().length == 0) ? null : evt
     // where evt is number. Through the code when entered value is removed (backspace)
@@ -147,49 +151,44 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
             <>
                 {
                     this.state.fieldType == FieldTypeKindEnum.Text ? 
-                    <CreateTextField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} />
+                    <CreateTextField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
                     : null
                 }
                 {
                     this.state.fieldType == FieldTypeKindEnum.Note ? 
-                    <CreateMultiLineField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} />
+                    <CreateMultiLineField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
                     : null
                 }
                 {
                     this.state.fieldType == FieldTypeKindEnum.Number ? 
-                    <CreateNumberField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} />
+                    <CreateNumberField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
                     : null
                 }
                 {
                     this.state.fieldType == FieldTypeKindEnum.Currency ? 
-                    <CreateCurrencyField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} />
+                    <CreateCurrencyField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
                     : null
                 }
                 {
                     this.state.fieldType == FieldTypeKindEnum.Choice ? 
-                    <CreateChoiceField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} />
+                    <CreateChoiceField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
                     : null
                 }
                 {
                     this.state.fieldType == FieldTypeKindEnum.Boolean ? 
-                    <CreateBooleanField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} />
+                    <CreateBooleanField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
                     : null
                 }
                 {
                     this.state.fieldType == FieldTypeKindEnum.URL ? 
-                    <CreateURLField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} />
+                    <CreateURLField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
                     : null
                 }
                 {
                     this.state.fieldType == FieldTypeKindEnum.DateTime ? 
-                    <CreateDateTimeField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} />
+                    <CreateDateTimeField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
                     : null
                 }
-                <TextField label="Column Name" id="columnName" required value={this.state.columnName} onKeyUp={() => this.generateInternalName()} />
-                <Dropdown label="Field Type" options={options} defaultSelectedKey={this.state.fieldType} onChanged={(evt: any) => this.setState({fieldType: evt.key})} />
-                <TextField label="Internal Name" required value={this.state.internalName} onKeyUp={(evt) => this.setState({internalName: (evt.target as HTMLInputElement).value})} />
-                <TextField label="Group" defaultValue={this.props.group} onChange={(evt: React.FormEvent<HTMLInputElement>) => { this.setState({ group: (evt.target as any).value });}} />
-                <TextField label="Description" name="columnName" multiline autoAdjustHeight onChange={(evt: React.FormEvent<HTMLTextAreaElement>) => { this.setState({ description: (evt.target as any).value });}} />
             </>
         );
     }
