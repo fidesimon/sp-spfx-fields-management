@@ -8,6 +8,7 @@ import { CreateMultiLineField } from './CreateFieldComponents/CreateMultiLineFie
 import { CreateNumberField } from './CreateFieldComponents/CreateNumberField';
 import { CreateCurrencyField } from './CreateFieldComponents/CreateCurrencyField';
 import { CreateChoiceField } from './CreateFieldComponents/CreateChoiceField';
+import { CreateBooleanField } from './CreateFieldComponents/CreateBooleanField';
 import { ISPField } from './SPField';
 import { FieldTypeKindEnum } from './FieldTypeKindEnum';
 import { BaseComponentContext } from '@microsoft/sp-component-base';
@@ -96,18 +97,6 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
         let body: ISPField;
         let defaultString: string = '';
         switch(this.state.fieldType){
-            case FieldTypeKindEnum.Boolean:
-                    body = {
-                        "@odata.type": "#SP.Field",
-                        Title: data.columnName,
-                        StaticName: data.internalName,
-                        InternalName: data.internalName,
-                        FieldTypeKind: FieldTypeKindEnum.Boolean,
-                        Group: data.group,
-                        Description: data.description,
-                        SchemaXml: '<Field Type="Boolean" DisplayName="'+ data.columnName + '" Required="FALSE" EnforceUniqueValues="FALSE" Description="'+data.description+'" Group="'+data.group+'" StaticName="'+data.internalName+'" Name="'+data.internalName+'"><Default>'+data.defaultBooleanValueAsString+'</Default></Field>'
-                    };
-            break;
             case FieldTypeKindEnum.URL:
                     body = {
                         "@odata.type": "#SP.FieldUrl",
@@ -208,20 +197,16 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                     <CreateChoiceField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} />
                     : null
                 }
+                {
+                    this.state.fieldType == FieldTypeKindEnum.Boolean ? 
+                    <CreateBooleanField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} />
+                    : null
+                }
                 <TextField label="Column Name" id="columnName" required value={this.state.columnName} onKeyUp={() => this.generateInternalName()} />
                 <Dropdown label="Field Type" options={options} defaultSelectedKey={this.state.fieldType} onChanged={(evt: any) => this.setState({fieldType: evt.key})} />
                 <TextField label="Internal Name" required value={this.state.internalName} onKeyUp={(evt) => this.setState({internalName: (evt.target as HTMLInputElement).value})} />
                 <TextField label="Group" defaultValue={this.props.group} onChange={(evt: React.FormEvent<HTMLInputElement>) => { this.setState({ group: (evt.target as any).value });}} />
                 <TextField label="Description" name="columnName" multiline autoAdjustHeight onChange={(evt: React.FormEvent<HTMLTextAreaElement>) => { this.setState({ description: (evt.target as any).value });}} />
-                {
-                    this.state.fieldType == FieldTypeKindEnum.Boolean ?
-                    <>
-                        <Dropdown label="Default value" options={[{key: '1', text: 'Yes'}, {key: '0', text: 'No'}]} defaultSelectedKey={this.state.defaultBooleanValueAsString} onChanged={(evt:any) => {
-                            this.setState({defaultBooleanValueAsString: evt.key});
-                        }} />
-                    </>
-                    : null
-                }
                 {
                     this.state.fieldType == FieldTypeKindEnum.URL ? 
                     <>
