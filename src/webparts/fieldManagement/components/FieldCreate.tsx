@@ -34,8 +34,8 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
 
     protected async createNewField(body: ISPField): Promise<any>{
         let context = this.props.context;
-
         let bodyStr = JSON.stringify(body);
+
         const headers = new Headers();
         headers.append("Accept", "application/json;odata.metadata=full");
         headers.append("Content-type", "application/json;odata.metadata=full");
@@ -44,6 +44,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
             headers: headers,
             body: bodyStr
         };
+
         let response = await context.spHttpClient.post(context.pageContext.web.absoluteUrl + `/_api/web/fields`, SPHttpClient.configurations.v1, optUpdate1);
         let jsonResponse = await response.json();
         if(response.status == 201){
@@ -70,48 +71,32 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
             { key: FieldTypeKindEnum.Calculated , text: 'Calculated (calculation based on other columns)', disabled: true }
           ];
 
+        const renderCreateFieldComponent = (fieldType: FieldTypeKindEnum) => {
+            switch(fieldType){
+                case FieldTypeKindEnum.Text:
+                    return <CreateTextField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
+                case FieldTypeKindEnum.Note:
+                    return <CreateMultiLineField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
+                case FieldTypeKindEnum.Number:
+                    return <CreateNumberField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
+                case FieldTypeKindEnum.Currency:
+                    return <CreateCurrencyField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
+                case FieldTypeKindEnum.Choice:
+                    return <CreateChoiceField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
+                case FieldTypeKindEnum.Boolean:
+                    return <CreateBooleanField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
+                case FieldTypeKindEnum.URL:
+                    return <CreateURLField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
+                case FieldTypeKindEnum.DateTime:
+                    return <CreateDateTimeField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
+                default:
+                    return null;
+            }
+        }
+
         return (
             <>
-                {
-                    this.state.fieldType == FieldTypeKindEnum.Text ? 
-                    <CreateTextField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
-                    : null
-                }
-                {
-                    this.state.fieldType == FieldTypeKindEnum.Note ? 
-                    <CreateMultiLineField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
-                    : null
-                }
-                {
-                    this.state.fieldType == FieldTypeKindEnum.Number ? 
-                    <CreateNumberField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
-                    : null
-                }
-                {
-                    this.state.fieldType == FieldTypeKindEnum.Currency ? 
-                    <CreateCurrencyField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
-                    : null
-                }
-                {
-                    this.state.fieldType == FieldTypeKindEnum.Choice ? 
-                    <CreateChoiceField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
-                    : null
-                }
-                {
-                    this.state.fieldType == FieldTypeKindEnum.Boolean ? 
-                    <CreateBooleanField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
-                    : null
-                }
-                {
-                    this.state.fieldType == FieldTypeKindEnum.URL ? 
-                    <CreateURLField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
-                    : null
-                }
-                {
-                    this.state.fieldType == FieldTypeKindEnum.DateTime ? 
-                    <CreateDateTimeField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
-                    : null
-                }
+                { renderCreateFieldComponent(this.state.fieldType) }
             </>
         );
     }
