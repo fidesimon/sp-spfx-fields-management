@@ -30,6 +30,10 @@ export default class FieldDisplay extends React.Component<FieldDisplayProps, {}>
                     <div className="ms-Grid-col ms-sm6 ms-md4 ms-lg2">Group:</div>
                     <div className="ms-Grid-col ms-sm6 ms-md8 ms-lg10">{field.Group}</div>
                 </div>
+                <div className="ms-Grid-row">
+                    <div className="ms-Grid-col ms-sm6 ms-md4 ms-lg2">Description:</div>
+                    <div className="ms-Grid-col ms-sm6 ms-md8 ms-lg10">{field.Description}</div>
+                </div>
             </div>
         );
     }

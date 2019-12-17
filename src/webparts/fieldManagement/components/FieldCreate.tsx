@@ -28,7 +28,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
     constructor(props){
         super(props);
         this.state = { 
-            fieldType: FieldTypeKindEnum.Text
+            fieldType: FieldTypeKindEnum.Text //default field type to start with
         };
     }
 

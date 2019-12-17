@@ -9,7 +9,6 @@ import FieldCreate from './FieldCreate';
 
 import 'office-ui-fabric-core/dist/css/fabric.css';
 
-
 import {
   SPHttpClient,
   SPHttpClientResponse,
@@ -337,17 +336,6 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
       </div>
     );
   }
-
-  /*
-{this.state.ListOfGroups.map(group => <Group key={group.Name} 
-                                                        name={group.Name} 
-                                                        fields={group.Fields} 
-                                                        fieldsAscending={group.Ascending} 
-                                                        sortHandler={this.sortGroupFields} 
-                                                        deleteField={this.deleteField.bind(this)} 
-                                                        addFieldHandler={this.addFieldHandler} 
-                                                        clickHandler={this.handleFieldClick} />)}
-  */
 
   protected groupBy = key => array =>
     array.reduce((objectsByKeyValue, obj) =>{
