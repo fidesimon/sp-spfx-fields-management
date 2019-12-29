@@ -10,6 +10,7 @@ import { CreateBooleanField } from './CreateFieldComponents/CreateBooleanField';
 import { CreateURLField } from './CreateFieldComponents/CreateURLField';
 import { CreateDateTimeField } from './CreateFieldComponents/CreateDateTimeField';
 import { CreateUserField } from './CreateFieldComponents/CreateUserField';
+import { CreateLookupField } from './CreateFieldComponents/CreateLookupField';
 import { ISPField } from './SPField';
 import { FieldTypeKindEnum } from './FieldTypeKindEnum';
 import { BaseComponentContext } from '@microsoft/sp-component-base';
@@ -92,6 +93,8 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                     return <CreateDateTimeField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
                 case FieldTypeKindEnum.User:
                     return <CreateUserField context={this.props.context} saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
+                case FieldTypeKindEnum.User:
+                    return <CreateLookupField context={this.props.context} saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
                 default:
                     return null;
             }
