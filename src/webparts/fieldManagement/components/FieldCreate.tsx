@@ -9,6 +9,7 @@ import { CreateChoiceField } from './CreateFieldComponents/CreateChoiceField';
 import { CreateBooleanField } from './CreateFieldComponents/CreateBooleanField';
 import { CreateURLField } from './CreateFieldComponents/CreateURLField';
 import { CreateDateTimeField } from './CreateFieldComponents/CreateDateTimeField';
+import { CreateUserField } from './CreateFieldComponents/CreateUserField';
 import { ISPField } from './SPField';
 import { FieldTypeKindEnum } from './FieldTypeKindEnum';
 import { BaseComponentContext } from '@microsoft/sp-component-base';
@@ -66,7 +67,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
             { key: FieldTypeKindEnum.DateTime , text: 'Date and Time' },
             { key: FieldTypeKindEnum.Lookup , text: 'Lookup (information already on this site)', disabled: true },
             { key: FieldTypeKindEnum.Boolean , text: 'Yes/No (check box)' },
-            { key: FieldTypeKindEnum.User , text: 'Person or Group', disabled: true },
+            { key: FieldTypeKindEnum.User , text: 'Person or Group' },
             { key: FieldTypeKindEnum.URL , text: 'Hyperlink or Picture' },
             { key: FieldTypeKindEnum.Calculated , text: 'Calculated (calculation based on other columns)', disabled: true }
           ];
@@ -89,6 +90,8 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
                     return <CreateURLField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
                 case FieldTypeKindEnum.DateTime:
                     return <CreateDateTimeField saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
+                case FieldTypeKindEnum.User:
+                    return <CreateUserField context={this.props.context} saveButtonHandler={this.createNewField.bind(this)} groupName={this.props.group} fieldTypeOptions={options} cancelButtonHandler={this.props.closePanel} onFieldTypeChange={this.changeFieldType.bind(this)} />
                 default:
                     return null;
             }
