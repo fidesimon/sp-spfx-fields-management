@@ -5,11 +5,11 @@ import { ISPField } from '../SPField';
 import { ICreateFieldProps } from './ICreateFieldProps';
 import { BaseComponentContext } from '@microsoft/sp-component-base';
 
-interface ICreateUserFieldProps extends ICreateFieldProps{
+interface ICreateLookupFieldProps extends ICreateFieldProps{
     context: BaseComponentContext;
 }
 
-export const CreateUserField: React.FC<ICreateUserFieldProps> = (props) => {
+export const CreateLookupField: React.FC<ICreateLookupFieldProps> = (props) => {
     const [columnName, setColumnName] = React.useState("");
     const fieldType = FieldTypeKindEnum.User;
     const [internalName, setInternalName] = React.useState("");
