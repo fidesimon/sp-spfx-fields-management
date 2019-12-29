@@ -4,8 +4,9 @@ import { FieldTypeKindEnum } from '../FieldTypeKindEnum';
 import { ISPField } from '../SPField';
 import { ICreateFieldProps } from './ICreateFieldProps';
 import { BaseComponentContext } from '@microsoft/sp-component-base';
+import { SPHttpClient } from '@microsoft/sp-http';
 
-interface ICreateLookupFieldProps extends ICreateFieldProps{
+interface ICreateLookupFieldProps extends ICreateFieldProps {
     context: BaseComponentContext;
 }
 
@@ -17,6 +18,35 @@ export const CreateLookupField: React.FC<ICreateLookupFieldProps> = (props) => {
     const [description, setDescription] = React.useState("");
     const [required, setRequired] = React.useState(false);
     const [enforceUniqueValues, setEnforceUniqueValues] = React.useState<boolean>(false);
+    const [lists, setLists] = React.useState<IDropdownOption[]>([]);
+
+    React.useEffect(() => {
+        retrieveLists();
+        return () => {
+        }
+    },
+        []
+    );
+
+    const retrieveLists = () => {
+        //responseJSON.value.filter(n=>n.Hidden == false).filter(n=>n.TemplateFeatureId != "00000000-0000-0000-0000-000000000000").forEach((list) => console.log(list.Title + " hidden? " + list.BaseTemplate))
+        let context = props.context;
+        let requestUrl = context.pageContext.web.absoluteUrl + `/_api/web/lists?&$filter=(TemplateFeatureId ne '00000000-0000-0000-0000-000000000000' and Hidden eq false)&$select=Id,Title`;
+        context.spHttpClient.get(requestUrl, SPHttpClient.configurations.v1).then((response) => {
+            if (response.ok) {
+                response.json().then((responseJSON) => {
+                    console.log({responseJSON});
+                    let lists: IDropdownOption[] = [];
+                    responseJSON.value.forEach((list) => {
+                        lists.push({ key: list.Id, text: list.Title });
+                    });
+                    setLists(lists);
+                    // setGroupFields(siteGroups);
+                    // setSelectedGroup(siteGroups[0].key.toString());
+                });
+            }
+        });
+    }
 
     const saveNewField = () => {
         let body: ISPField;
@@ -50,6 +80,11 @@ export const CreateLookupField: React.FC<ICreateLookupFieldProps> = (props) => {
             <TextField label="Description" multiline autoAdjustHeight onChange={(evt: React.FormEvent<HTMLTextAreaElement>) => { setDescription((evt.target as any).value) }} />
             <Toggle label="Required" onChanged={(evt) => setRequired(evt)} />
             <Toggle label="Enforce Unique Values" onChanged={(evt) => setEnforceUniqueValues(evt)} />
+            {
+                lists.length == 0 ?
+                    null :
+                    <Dropdown label="Get Information From" defaultSelectedKey={lists[0].key} options={lists} />
+            }
             <br />
             <PrimaryButton text="Save" onClick={() => saveNewField()} />
             <Button text="Cancel" onClick={() => props.cancelButtonHandler()} />
