@@ -11,7 +11,7 @@ interface ICreateLookupFieldProps extends ICreateFieldProps{
 
 export const CreateLookupField: React.FC<ICreateLookupFieldProps> = (props) => {
     const [columnName, setColumnName] = React.useState("");
-    const fieldType = FieldTypeKindEnum.User;
+    const fieldType = FieldTypeKindEnum.Lookup;
     const [internalName, setInternalName] = React.useState("");
     const [group, setGroup] = React.useState(props.groupName);
     const [description, setDescription] = React.useState("");
