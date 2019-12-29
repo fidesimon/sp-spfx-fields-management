@@ -66,7 +66,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
             { key: FieldTypeKindEnum.Choice , text: 'Choice (menu to choose from)' },
             { key: FieldTypeKindEnum.Currency , text: 'Currency ($, ¥, €)' },
             { key: FieldTypeKindEnum.DateTime , text: 'Date and Time' },
-            { key: FieldTypeKindEnum.Lookup , text: 'Lookup (information already on this site)', disabled: true },
+            { key: FieldTypeKindEnum.Lookup , text: 'Lookup (information already on this site)' },
             { key: FieldTypeKindEnum.Boolean , text: 'Yes/No (check box)' },
             { key: FieldTypeKindEnum.User , text: 'Person or Group' },
             { key: FieldTypeKindEnum.URL , text: 'Hyperlink or Picture' },
