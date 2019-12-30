@@ -19,6 +19,7 @@ export const CreateLookupField: React.FC<ICreateLookupFieldProps> = (props) => {
     const [required, setRequired] = React.useState(false);
     const [enforceUniqueValues, setEnforceUniqueValues] = React.useState<boolean>(false);
     const [lists, setLists] = React.useState<IDropdownOption[]>([]);
+    const [fields, setFields] = React.useState<IDropdownOption[]>([]);
 
     React.useEffect(() => {
         retrieveLists();
@@ -41,6 +42,26 @@ export const CreateLookupField: React.FC<ICreateLookupFieldProps> = (props) => {
                         lists.push({ key: list.Id, text: list.Title });
                     });
                     setLists(lists);
+                    retrieveFields(lists[0].key.toString());
+                    // setGroupFields(siteGroups);
+                    // setSelectedGroup(siteGroups[0].key.toString());
+                });
+            }
+        });
+    }
+
+    const retrieveFields = (guid: string) => {
+        let context = props.context;
+        let requestUrl = context.pageContext.web.absoluteUrl + `/_api/web/lists(guid'${guid}')/fields?&$filter=((FieldTypeKind eq 2 or FieldTypeKind eq 4 or FieldTypeKind eq 5 or FieldTypeKind eq 9) and Hidden eq false)&$select=InternalName,Title`;
+        context.spHttpClient.get(requestUrl, SPHttpClient.configurations.v1).then((response) => {
+            if (response.ok) {
+                response.json().then((responseJSON) => {
+                    console.log({responseJSON});
+                    let fields: IDropdownOption[] = [];
+                    responseJSON.value.forEach((field) => {
+                        fields.push({ key: field.InternalName, text: field.Title });
+                    });
+                    setFields(fields);
                     // setGroupFields(siteGroups);
                     // setSelectedGroup(siteGroups[0].key.toString());
                 });
@@ -84,6 +105,11 @@ export const CreateLookupField: React.FC<ICreateLookupFieldProps> = (props) => {
                 lists.length == 0 ?
                     null :
                     <Dropdown label="Get Information From" defaultSelectedKey={lists[0].key} options={lists} />
+            }
+            {
+                fields.length == 0 ?
+                    null :
+                    <Dropdown label="In This Column" defaultSelectedKey={fields[0].key} options={fields} />
             }
             <br />
             <PrimaryButton text="Save" onClick={() => saveNewField()} />
