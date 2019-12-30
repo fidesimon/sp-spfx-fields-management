@@ -30,7 +30,6 @@ export const CreateLookupField: React.FC<ICreateLookupFieldProps> = (props) => {
     );
 
     const retrieveLists = () => {
-        //responseJSON.value.filter(n=>n.Hidden == false).filter(n=>n.TemplateFeatureId != "00000000-0000-0000-0000-000000000000").forEach((list) => console.log(list.Title + " hidden? " + list.BaseTemplate))
         let context = props.context;
         let requestUrl = context.pageContext.web.absoluteUrl + `/_api/web/lists?&$filter=(TemplateFeatureId ne '00000000-0000-0000-0000-000000000000' and Hidden eq false)&$select=Id,Title`;
         context.spHttpClient.get(requestUrl, SPHttpClient.configurations.v1).then((response) => {
@@ -43,8 +42,6 @@ export const CreateLookupField: React.FC<ICreateLookupFieldProps> = (props) => {
                     });
                     setLists(lists);
                     retrieveFields(lists[0].key.toString());
-                    // setGroupFields(siteGroups);
-                    // setSelectedGroup(siteGroups[0].key.toString());
                 });
             }
         });
@@ -62,8 +59,6 @@ export const CreateLookupField: React.FC<ICreateLookupFieldProps> = (props) => {
                         fields.push({ key: field.InternalName, text: field.Title });
                     });
                     setFields(fields);
-                    // setGroupFields(siteGroups);
-                    // setSelectedGroup(siteGroups[0].key.toString());
                 });
             }
         });
