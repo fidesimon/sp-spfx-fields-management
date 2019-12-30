@@ -20,6 +20,8 @@ export const CreateLookupField: React.FC<ICreateLookupFieldProps> = (props) => {
     const [enforceUniqueValues, setEnforceUniqueValues] = React.useState<boolean>(false);
     const [lists, setLists] = React.useState<IDropdownOption[]>([]);
     const [fields, setFields] = React.useState<IDropdownOption[]>([]);
+    const [allowMultipleValues, setAllowMultipleValues] = React.useState<boolean>(false);
+    const [allowUnlimitedLength, setAllowUnlimitedLength] = React.useState<boolean>(false);
 
     React.useEffect(() => {
         retrieveLists();
@@ -106,6 +108,8 @@ export const CreateLookupField: React.FC<ICreateLookupFieldProps> = (props) => {
                     null :
                     <Dropdown label="In This Column" defaultSelectedKey={fields[0].key} options={fields} />
             }
+            <Toggle label="Allow Multiple Values" onChanged={(evt) => setAllowMultipleValues(evt)} />
+            <Toggle label="Allow Unlimited Length in Document Libraries" onChanged={(evt) => setAllowUnlimitedLength(evt)} />
             <br />
             <PrimaryButton text="Save" onClick={() => saveNewField()} />
             <Button text="Cancel" onClick={() => props.cancelButtonHandler()} />
