@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PrimaryButton, Button, Dropdown, TextField, Toggle, IDropdownOption } from 'office-ui-fabric-react';
+import { PrimaryButton, Button, Dropdown, Checkbox, TextField, Toggle, IDropdownOption, ComboBox, IComboBox } from 'office-ui-fabric-react';
 import { FieldTypeKindEnum } from '../FieldTypeKindEnum';
 import { ISPField } from '../SPField';
 import { ICreateFieldProps } from './ICreateFieldProps';
@@ -20,8 +20,12 @@ export const CreateLookupField: React.FC<ICreateLookupFieldProps> = (props) => {
     const [enforceUniqueValues, setEnforceUniqueValues] = React.useState<boolean>(false);
     const [lists, setLists] = React.useState<IDropdownOption[]>([]);
     const [fields, setFields] = React.useState<IDropdownOption[]>([]);
+    const [selectedList, setSelectedList] = React.useState();
     const [allowMultipleValues, setAllowMultipleValues] = React.useState<boolean>(false);
     const [allowUnlimitedLength, setAllowUnlimitedLength] = React.useState<boolean>(false);
+    const [selectedColumn, setSelectedColumn] = React.useState();
+    const [selectedFields, setSelectedFields] = React.useState<number[]>([]);
+    const fieldsRef = React.useRef<any>();
 
     React.useEffect(() => {
         retrieveLists();
@@ -61,13 +65,28 @@ export const CreateLookupField: React.FC<ICreateLookupFieldProps> = (props) => {
                         fields.push({ key: field.InternalName, text: field.Title });
                     });
                     setFields(fields);
+                    setSelectedFields([]);
+                    setSelectedList(guid);
                 });
             }
         });
     }
 
     const saveNewField = () => {
-        let body: ISPField;
+        let body: any;
+
+        // body = {
+        //     "@odata.type": "#SP.FieldLookup",
+        //     Title: columnName,
+        //     StaticName: internalName,
+        //     InternalName: internalName,
+        //     FieldTypeKind: fieldType,
+        //     Required: required,
+        //     EnforceUniqueValues: enforceUniqueValues,
+        //     Group: group,
+        //     Description: description,
+        //     SchemaXml: `<Field Type="Lookup" Description="${description}" DisplayName="${columnName}" Required="${(required ? "TRUE" : "FALSE")}" EnforceUniqueValues="${(enforceUniqueValues ? "TRUE" : "FALSE")}" Group="${group}" StaticName="${internalName}" Name="${internalName}"></Field>`
+        // };
 
         body = {
             "@odata.type": "#SP.FieldLookup",
@@ -79,7 +98,9 @@ export const CreateLookupField: React.FC<ICreateLookupFieldProps> = (props) => {
             EnforceUniqueValues: enforceUniqueValues,
             Group: group,
             Description: description,
-            SchemaXml: `<Field Type="Lookup" Description="${description}" DisplayName="${columnName}" Required="${(required ? "TRUE" : "FALSE")}" EnforceUniqueValues="${(enforceUniqueValues ? "TRUE" : "FALSE")}" Group="${group}" StaticName="${internalName}" Name="${internalName}"></Field>`
+            AllowMultipleValues: true,
+            DependentLookupInternalNames: ["aa2_x003A_ID", "aa2_x003A_Title", "aa2_x003A_Modified"],
+            SchemaXml: `<Field Type="LookupMulti" List="${selectedList}" ShowField="${selectedColumn}" Mult="TRUE" Description="${description}" DisplayName="${columnName}" Required="${(required ? "TRUE" : "FALSE")}" EnforceUniqueValues="${(enforceUniqueValues ? "TRUE" : "FALSE")}" Group="${group}" StaticName="${internalName}" Name="${internalName}"></Field>`
         };
 
         props.saveButtonHandler(body);
@@ -101,15 +122,24 @@ export const CreateLookupField: React.FC<ICreateLookupFieldProps> = (props) => {
             {
                 lists.length == 0 ?
                     null :
-                    <Dropdown label="Get Information From" defaultSelectedKey={lists[0].key} options={lists} />
+                    <Dropdown label="Get Information From" defaultSelectedKey={lists[0].key} options={lists} onChanged={(evt) => retrieveFields(evt.key.toString())} />
             }
             {
                 fields.length == 0 ?
                     null :
-                    <Dropdown label="In This Column" defaultSelectedKey={fields[0].key} options={fields} />
+                    <Dropdown label="In This Column" defaultSelectedKey={fields[0].key} options={fields} onChanged={(evt) => {
+                        setSelectedColumn(evt.key);
+                    }} />
             }
             <Toggle label="Allow Multiple Values" onChanged={(evt) => setAllowMultipleValues(evt)} />
             <Toggle label="Allow Unlimited Length in Document Libraries" onChanged={(evt) => setAllowUnlimitedLength(evt)} />
+            {
+                fields.length != 0 ?
+                    <ComboBox label="Add a column to show each of these additional fields" autoComplete="on" options={fields} placeholder="Select columns" multiSelect componentRef={fieldsRef} onBlur={(evt: React.FocusEvent<IComboBox>) =>
+                        setSelectedFields(fieldsRef.current.state.selectedIndices)
+                      }  />
+                        : null
+            }
             <br />
             <PrimaryButton text="Save" onClick={() => saveNewField()} />
             <Button text="Cancel" onClick={() => props.cancelButtonHandler()} />

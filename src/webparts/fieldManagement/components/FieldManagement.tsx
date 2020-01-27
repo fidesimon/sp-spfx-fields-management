@@ -1,11 +1,12 @@
 import * as React from 'react';
 import styles from './FieldManagement.module.scss';
 import { IFieldManagementProps } from './IFieldManagementProps';
-import { Panel, PanelType, DetailsList, GroupedList } from 'office-ui-fabric-react';
+import { Panel, PanelType, DetailsList, GroupedList, Pivot, PivotItem, PivotLinkFormat, ICommandBarItemProps, CommandBar, Layer, Separator, createTheme, ITheme, getTheme, Label, Spinner } from 'office-ui-fabric-react';
 import { IGroup, Group } from './Group';
 import { GroupList } from './GroupList';
 import FieldDisplay from './FieldDisplay';
 import FieldCreate from './FieldCreate';
+import DisplayFields from './FieldsList/DisplayFields';
 
 import 'office-ui-fabric-core/dist/css/fabric.css';
 
@@ -25,34 +26,43 @@ export interface IFieldManagementState {
   createFieldGroupName: string;
 }
 
-export class groupsDetailedList{
+export class groupsDetailedList {
   key: string;
   name: string;
   startIndex: number;
   count: number;
 }
 
-export class DataDetailedList{
+export class DataDetailedList {
   groups: groupsDetailedList[];
   items: ISPField[];
 }
 
+const theme: ITheme = createTheme({
+  fonts: {
+    medium: {
+      fontSize: '18px'
+    }
+  }
+});
+
 export default class FieldManagement extends React.Component<IFieldManagementProps, IFieldManagementState> {
-  constructor(props){
+  constructor(props) {
     super(props);
-    this.state = { ListOfGroups: this.mockData, createFieldGroupName: '', isPanelOpened: false, isCreateFieldPanelOpen: false, fieldToDisplay: null, fieldsPlain: this.magicWithGroups(this.mockData)};
+    this.state = { ListOfGroups: [], createFieldGroupName: '', isPanelOpened: false, isCreateFieldPanelOpen: false, fieldToDisplay: null, fieldsPlain: this.magicWithGroups(this.mockData) };
+    //this.state = { ListOfGroups: this.mockData, createFieldGroupName: '', isPanelOpened: false, isCreateFieldPanelOpen: false, fieldToDisplay: null, fieldsPlain: this.magicWithGroups(this.mockData) };
     this.deleteField.bind(this);
   }
 
-  magicWithGroups(groups: IGroup[]): DataDetailedList{
+  magicWithGroups(groups: IGroup[]): DataDetailedList {
     let groupz: groupsDetailedList[] = [];
     let items: ISPField[] = [];
     let count: number[] = [];
     let itemCounter: number = 0;
-    for(let i = 0; i < groups.length; i++){
+    for (let i = 0; i < groups.length; i++) {
       items.push(...groups[i].Fields);
       count.push(groups[i].Fields.length);
-      groupz.push({key: groups[i].Name, name: groups[i].Name, startIndex: itemCounter, count: count[i]});
+      groupz.push({ key: groups[i].Name, name: groups[i].Name, startIndex: itemCounter, count: count[i] });
       itemCounter += count[i];
     }
     return {
@@ -60,47 +70,50 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
       items: items
     };
   }
-  
-  mockData : Array<IGroup> = [
-    { Name: "AAA", Ascending: true, Fields: [{AutoIndexed: false,
-      CanBeDeleted: true,
-      ClientSideComponentId: "00000000-0000-0000-0000-000000000000",
-      ClientSideComponentProperties: null,
-      ClientValidationFormula: null,
-      ClientValidationMessage: null,
-      CustomFormatter: null,
-      DefaultFormula: null,
-      DefaultValue: null,
-      Description: "",
-      Direction: "none",
-      EnforceUniqueValues: false,
-      EntityPropertyName: "OrganizationalIDNumber",
-      FieldTypeKind: 2,
-      Filterable: true,
-      FromBaseType: false,
-      Group: "Core Contact and Calendar Columns",
-      Hidden: false,
-      Id: "0850ae15-19dd-431f-9c2f-3aff3ae292ce",
-      IndexStatus: 0,
-      Indexed: false,
-      InternalName: "OrganizationalIDNumber",
-      JSLink: "clienttemplates.js",
-      MaxLength: 255,
-      PinnedToFiltersPane: false,
-      ReadOnlyField: false,
-      Required: false,
-      SchemaXml: '<Field ID="{0850AE15-19DD-431f-9C2F-3AFF3AE292CE}" Name="OrganizationalIDNumber" StaticName="OrganizationalIDNumber" SourceID="http://schemas.microsoft.com/sharepoint/v3" DisplayName="Organizational ID Number" Group="Core Contact and Calendar Columns" Type="Text" Sealed="TRUE" AllowDeletion="TRUE" />',
-      Scope: "/sites/firstTest",
-      Sealed: true,
-      ShowInFiltersPane: 0,
-      Sortable: true,
-      StaticName: "OrganizationalIDNumber",
-      Title: "Organizational ID Number",
-      TypeAsString: "Text",
-      TypeDisplayName: "Single line of text",
-      TypeShortDescription: "Single line of text",
-      ValidationFormula: null,
-      ValidationMessage: null},
+
+  mockData: Array<IGroup> = [
+    {
+      Name: "AAA", Ascending: true, Fields: [{
+        AutoIndexed: false,
+        CanBeDeleted: true,
+        ClientSideComponentId: "00000000-0000-0000-0000-000000000000",
+        ClientSideComponentProperties: null,
+        ClientValidationFormula: null,
+        ClientValidationMessage: null,
+        CustomFormatter: null,
+        DefaultFormula: null,
+        DefaultValue: null,
+        Description: "",
+        Direction: "none",
+        EnforceUniqueValues: false,
+        EntityPropertyName: "OrganizationalIDNumber",
+        FieldTypeKind: 2,
+        Filterable: true,
+        FromBaseType: false,
+        Group: "Core Contact and Calendar Columns",
+        Hidden: false,
+        Id: "0850ae15-19dd-431f-9c2f-3aff3ae292ce",
+        IndexStatus: 0,
+        Indexed: false,
+        InternalName: "OrganizationalIDNumber",
+        JSLink: "clienttemplates.js",
+        MaxLength: 255,
+        PinnedToFiltersPane: false,
+        ReadOnlyField: false,
+        Required: false,
+        SchemaXml: '<Field ID="{0850AE15-19DD-431f-9C2F-3AFF3AE292CE}" Name="OrganizationalIDNumber" StaticName="OrganizationalIDNumber" SourceID="http://schemas.microsoft.com/sharepoint/v3" DisplayName="Organizational ID Number" Group="Core Contact and Calendar Columns" Type="Text" Sealed="TRUE" AllowDeletion="TRUE" />',
+        Scope: "/sites/firstTest",
+        Sealed: true,
+        ShowInFiltersPane: 0,
+        Sortable: true,
+        StaticName: "OrganizationalIDNumber",
+        Title: "Organizational ID Number",
+        TypeAsString: "Text",
+        TypeDisplayName: "Single line of text",
+        TypeShortDescription: "Single line of text",
+        ValidationFormula: null,
+        ValidationMessage: null
+      },
       {
         AutoIndexed: false,
         CanBeDeleted: true,
@@ -139,8 +152,12 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
         TypeDisplayName: "Multiple lines of text",
         TypeShortDescription: "Multiple lines of text",
         ValidationFormula: null,
-        ValidationMessage: null}] },
-      { Name: "BBB", Ascending: true, Fields: [{AutoIndexed: false,
+        ValidationMessage: null
+      }]
+    },
+    {
+      Name: "BBB", Ascending: true, Fields: [{
+        AutoIndexed: false,
         CanBeDeleted: false,
         ClientSideComponentId: "00000000-0000-0000-0000-000000000000",
         ClientSideComponentProperties: null,
@@ -177,8 +194,12 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
         TypeDisplayName: "Integer",
         TypeShortDescription: "Integer",
         ValidationFormula: null,
-        ValidationMessage: null}]},
-      { Name: "CCC", Ascending: true, Fields: [{AutoIndexed: false,
+        ValidationMessage: null
+      }]
+    },
+    {
+      Name: "CCC", Ascending: true, Fields: [{
+        AutoIndexed: false,
         CanBeDeleted: true,
         Choices: ["Lorem", "Ipsum", "Sit", "Mit", "Dolor"],
         ClientSideComponentId: "00000000-0000-0000-0000-000000000000",
@@ -216,56 +237,57 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
         TypeDisplayName: "Choice",
         TypeShortDescription: "Choice (menu to choose from)",
         ValidationFormula: null,
-        ValidationMessage: null}]},
+        ValidationMessage: null
+      }]
+    },
 
   ];
 
-  componentWillMount(){
+  componentWillMount() {
     const grupki = this._retrieveColumns();
   }
 
-  handleFieldClick = (fieldData : ISPField) => {
-    this.setState({isPanelOpened: true, fieldToDisplay: fieldData});
+  handleFieldClick = (fieldData: ISPField) => {
+    this.setState({ isPanelOpened: true, fieldToDisplay: fieldData });
   }
 
-  addFieldHandler = (groupName : string) => {
-    console.log({groupName});
-    this.setState({isCreateFieldPanelOpen: true, createFieldGroupName: groupName});
+  addFieldHandler = (groupName: string) => {
+    console.log({ groupName });
+    this.setState({ isCreateFieldPanelOpen: true, createFieldGroupName: groupName });
   }
-  
+
   closeFieldCreatePanel = (fieldData) => {
     let currentItems = this.state.ListOfGroups;
     fieldData.JustAdded = true;
     let isAsc = true;
-    let groupDoesNotExist: boolean = currentItems.find(n=>n.Name == fieldData.Group) == undefined ? true : false;
-    if(groupDoesNotExist){
-      currentItems.push({Name: fieldData.Group, Fields: [fieldData as ISPField], Ascending: true} as IGroup);
-      this.setState({isCreateFieldPanelOpen: false, ListOfGroups: currentItems});
+    let groupDoesNotExist: boolean = currentItems.find(n => n.Name == fieldData.Group) == undefined ? true : false;
+    if (groupDoesNotExist) {
+      currentItems.push({ Name: fieldData.Group, Fields: [fieldData as ISPField], Ascending: true } as IGroup);
+      this.setState({ isCreateFieldPanelOpen: false, ListOfGroups: currentItems });
     }
-    else
-    {
-      currentItems.forEach((item)=>{
-        if(item.Name == fieldData.Group){
+    else {
+      currentItems.forEach((item) => {
+        if (item.Name == fieldData.Group) {
           item.Fields.push(fieldData as ISPField);
           isAsc = item.Ascending;
         }
       });
-      this.setState({isCreateFieldPanelOpen: false, ListOfGroups: currentItems});
+      this.setState({ isCreateFieldPanelOpen: false, ListOfGroups: currentItems });
       this.sortGroupFields(fieldData.Group, isAsc);
     }
 
-    
+
   }
 
   closePanel = () => {
-    this.setState({isCreateFieldPanelOpen: false});
+    this.setState({ isCreateFieldPanelOpen: false });
   }
 
   sortGroupFields = (groupName, ascending: boolean) => {
     function compare(a, b) {
       const val1 = a.Title.toUpperCase();
       const val2 = b.Title.toUpperCase();
-    
+
       let comparison = 0;
       if (val1 > val2) {
         comparison = ascending ? 1 : -1;
@@ -275,16 +297,16 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
       return comparison;
     }
     let currentItems = this.state.ListOfGroups;
-    currentItems.forEach((item)=>{
-      if(item.Name == groupName){
+    currentItems.forEach((item) => {
+      if (item.Name == groupName) {
         item.Fields.sort(compare);
         item.Ascending = ascending;
       }
     });
-    this.setState({ListOfGroups: currentItems});
+    this.setState({ ListOfGroups: currentItems });
   }
 
-  protected async deleteField(id, groupName) : Promise<any>{
+  protected async deleteField(id, groupName): Promise<any> {
     console.log('delete field ', id);
     let context = this.props.context;
 
@@ -295,50 +317,83 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
     h2.append("X-HTTP-Method", "DELETE");
 
     const optUpdate1: ISPHttpClientOptions = {
-        headers: h2
+      headers: h2
     };
     let response = await context.spHttpClient.post(context.pageContext.web.absoluteUrl + `/_api/web/fields/getbyid(guid'${id}')`, SPHttpClient.configurations.v1, optUpdate1);
 
-    if(response.status == 204){
+    if (response.status == 204) {
       console.log("Field deleted ", id);
       let currentItems = this.state.ListOfGroups;
-      currentItems.forEach((item)=>{
-        if(item.Name == groupName){
-          item.Fields = item.Fields.filter(n=>n.Id != id);
+      currentItems.forEach((item) => {
+        if (item.Name == groupName) {
+          item.Fields = item.Fields.filter(n => n.Id != id);
         }
       });
-      this.setState({ListOfGroups: currentItems});
+      this.setState({ ListOfGroups: currentItems });
     }
   }
 
   public render(): React.ReactElement<IFieldManagementProps> {
-    let {groups, items} = this.state.fieldsPlain;///this.magicWithGroups(this.mockData);
+    let { groups, items } = this.state.fieldsPlain;///this.magicWithGroups(this.mockData);
 
     return (
       <div className={styles.fieldManagement}>
         <Panel headerText="Create new site column" isOpen={this.state.isCreateFieldPanelOpen} type={PanelType.medium} onDismiss={() => this.closePanel()}>
           <FieldCreate context={this.props.context} group={this.state.createFieldGroupName} onItemSaved={this.closeFieldCreatePanel} closePanel={this.closePanel} />
         </Panel>
-        <Panel isOpen={this.state.isPanelOpened} type={PanelType.medium} onDismiss={() => this.setState({isPanelOpened: false})}>
+        <Panel isOpen={this.state.isPanelOpened} type={PanelType.medium} onDismiss={() => this.setState({ isPanelOpened: false })}>
           <FieldDisplay field={this.state.fieldToDisplay} />
         </Panel>
+        {
+          this.state.ListOfGroups.length == 0 ? 
+          <div>
+            <Spinner label="Data is being loaded..." />
+          </div>
+          :
+          this.state.ListOfGroups.map((group) => {
+            return (<>
+              <Separator theme={theme}>{group.Name}</Separator>
+              <CommandBar
+                items={
+                  [{
+                    key: 'newItem',
+                    text: 'New',
+                    cacheKey: 'myCacheKey', // changing this key will invalidate this item's cache
+                    iconProps: { iconName: 'Add' },
+                    onClick: () => this.addFieldHandler(group.Name)
+                  },
+                  {
+                    key: 'delete',
+                    text: 'Delete',
+                    iconProps: { iconName: 'Delete' },
+                    disabled: true
+                  }]
+                }
+                ariaLabel="Use left and right arrow keys to navigate between commands"
+              />
+              <DisplayFields fields={group} />
+            </>);
+          })
+        }
+      </div>
+    );
+  }
 
-        <div className={ styles.container }>
+  /*
+<div className={styles.container}>
           <div className={styles.row}>
             <div className={styles.fieldTitle}>Field Title</div>
             <div className={styles.fieldType}>Field Type</div>
           </div>
           <GroupList groups={this.state.ListOfGroups}
-                      addFieldHandler={this.addFieldHandler}
-                      clickHandler={this.handleFieldClick}
-                      deleteFieldHandler={this.deleteField.bind(this)} />
+            addFieldHandler={this.addFieldHandler}
+            clickHandler={this.handleFieldClick}
+            deleteFieldHandler={this.deleteField.bind(this)} />
         </div>
-      </div>
-    );
-  }
+  */
 
   protected groupBy = key => array =>
-    array.reduce((objectsByKeyValue, obj) =>{
+    array.reduce((objectsByKeyValue, obj) => {
       const value = obj[key];
       objectsByKeyValue[value] = (objectsByKeyValue[value] || []).concat(obj);
       return objectsByKeyValue;
@@ -348,12 +403,12 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
     let context = this.props.context;
     let requestUrl = context.pageContext.web.absoluteUrl + `/_api/web/fields?&$orderBy=Title`; //?$filter=CanBeDeleted eq true`;
 
-    let response : SPHttpClientResponse = await context.spHttpClient.get(requestUrl, SPHttpClient.configurations.v1);
-    
+    let response: SPHttpClientResponse = await context.spHttpClient.get(requestUrl, SPHttpClient.configurations.v1);
+
     function compare(a, b) {
       const val1 = a.Name.toUpperCase();
       const val2 = b.Name.toUpperCase();
-    
+
       let comparison = 0;
       if (val1 > val2) {
         comparison = 1;
@@ -363,19 +418,19 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
       return comparison;
     }
 
-    if(response.ok){
+    if (response.ok) {
       let responseJSON = await response.json();
-      if(responseJSON != null && responseJSON.value != null){
+      if (responseJSON != null && responseJSON.value != null) {
         const refineObjectByGroups = this.groupBy('Group');
         let refinedGroups = refineObjectByGroups(responseJSON.value);
-        let groupsArray : IGroup[] = [];
-        for (let key in refinedGroups){
-          if(key == "_Hidden") continue;
+        let groupsArray: IGroup[] = [];
+        for (let key in refinedGroups) {
+          if (key == "_Hidden") continue;
           let obj = refinedGroups[key];
-          groupsArray.push({Name: key, Ascending: true, Fields: (obj as ISPField[])});
+          groupsArray.push({ Name: key, Ascending: true, Fields: (obj as ISPField[]) });
         }
         groupsArray.sort(compare);
-        this.setState({ListOfGroups: groupsArray});
+        this.setState({ ListOfGroups: groupsArray });
       }
     }
   }

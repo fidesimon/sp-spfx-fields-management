@@ -34,7 +34,7 @@ export default class FieldCreate extends React.Component<FieldCreateProps, Field
         };
     }
 
-    protected async createNewField(body: ISPField): Promise<any>{
+    protected async createNewField(body: any): Promise<any>{
         let context = this.props.context;
         let bodyStr = JSON.stringify(body);
 
