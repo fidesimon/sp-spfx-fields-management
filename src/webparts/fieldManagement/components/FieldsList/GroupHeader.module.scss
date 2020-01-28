@@ -1,0 +1,17 @@
+@import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
+
+.groupHeader {
+  .container {
+    @include ms-Grid;
+    margin: 0px auto;
+  }
+  .row {
+    @include ms-Grid-row;
+    @include ms-fontSize-24;
+    background-color: $ms-color-themePrimary;
+    font-size: $ms-font-size-18;
+    text-align: center;
+    padding-bottom: 2px;
+    color: $ms-color-white;
+  }
+}

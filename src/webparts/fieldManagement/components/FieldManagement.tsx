@@ -7,6 +7,7 @@ import { GroupList } from './GroupList';
 import FieldDisplay from './FieldDisplay';
 import FieldCreate from './FieldCreate';
 import DisplayFields from './FieldsList/DisplayFields';
+import GroupHeader from './FieldsList/GroupHeader';
 
 import 'office-ui-fabric-core/dist/css/fabric.css';
 
@@ -49,8 +50,8 @@ const theme: ITheme = createTheme({
 export default class FieldManagement extends React.Component<IFieldManagementProps, IFieldManagementState> {
   constructor(props) {
     super(props);
-    this.state = { ListOfGroups: [], createFieldGroupName: '', isPanelOpened: false, isCreateFieldPanelOpen: false, fieldToDisplay: null, fieldsPlain: this.magicWithGroups(this.mockData) };
-    //this.state = { ListOfGroups: this.mockData, createFieldGroupName: '', isPanelOpened: false, isCreateFieldPanelOpen: false, fieldToDisplay: null, fieldsPlain: this.magicWithGroups(this.mockData) };
+    //this.state = { ListOfGroups: [], createFieldGroupName: '', isPanelOpened: false, isCreateFieldPanelOpen: false, fieldToDisplay: null, fieldsPlain: this.magicWithGroups(this.mockData) };
+    this.state = { ListOfGroups: this.mockData, createFieldGroupName: '', isPanelOpened: false, isCreateFieldPanelOpen: false, fieldToDisplay: null, fieldsPlain: this.magicWithGroups(this.mockData) };
     this.deleteField.bind(this);
   }
 
@@ -352,7 +353,7 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
           :
           this.state.ListOfGroups.map((group) => {
             return (<>
-              <Separator theme={theme}>{group.Name}</Separator>
+              <GroupHeader groupName={group.Name} />
               <CommandBar
                 items={
                   [{
@@ -367,7 +368,7 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
                     text: 'Delete',
                     iconProps: { iconName: 'Delete' },
                     disabled: true
-                  }]
+                  }] 
                 }
                 ariaLabel="Use left and right arrow keys to navigate between commands"
               />
