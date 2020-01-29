@@ -8,6 +8,7 @@ import { ISPField } from '../SPField';
 
 interface IDisplayFieldsProps {
     fields: IGroup;
+    removeFieldHandler: Function;
 }
 
 const classNames = mergeStyleSets({
@@ -53,6 +54,7 @@ export interface IDocument {
     typeDisplayName: string;
     fieldId: string;
     removable: string;
+    group: string;
 }
 
 
@@ -79,7 +81,7 @@ export default class DisplayFields extends React.Component<IDisplayFieldsProps, 
                 data: 'string',
                 isPadded: true,
                 onRender: (item: IDocument) => {
-                    return <span>{item.name}</span>;
+                    return <span key={item.key}>{item.name}</span>;
                 }
             },
             {
@@ -134,7 +136,7 @@ export default class DisplayFields extends React.Component<IDisplayFieldsProps, 
                 minWidth: 16,
                 maxWidth: 16,
                 onRender: (item: IDocument) => {
-                    return <span style={{color: item.removable == "T" ? "limegreen": "red"}}>{item.removable}</span>
+                    return <span style={{color: item.removable == "T" ? "limegreen": "red"}} onClick={()=>{ this.props.removeFieldHandler(item.fieldId, item.group)}}>{item.removable}</span>
                 }
             }
         ];
@@ -260,7 +262,8 @@ function _generateDocuments(propItems: IGroup) {
             internalName: itanz[i].StaticName,
             typeDisplayName: itanz[i].TypeDisplayName,
             fieldId: itanz[i].Id,
-            removable: itanz[i].CanBeDeleted ? "T" : "F"
+            removable: itanz[i].CanBeDeleted ? "T" : "F",
+            group: itanz[i].Group
         });
     }
     return items;

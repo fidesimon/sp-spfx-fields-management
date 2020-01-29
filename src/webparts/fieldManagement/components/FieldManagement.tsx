@@ -6,7 +6,7 @@ import { IGroup, Group } from './Group';
 import { GroupList } from './GroupList';
 import FieldDisplay from './FieldDisplay';
 import FieldCreate from './FieldCreate';
-import DisplayFields from './FieldsList/DisplayFields';
+import DisplayGroups from './FieldsList/DisplayGroups';
 import GroupHeader from './FieldsList/GroupHeader';
 
 import 'office-ui-fabric-core/dist/css/fabric.css';
@@ -352,28 +352,7 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
           </div>
           :
           this.state.ListOfGroups.map((group) => {
-            return (<>
-              <GroupHeader groupName={group.Name} />
-              <CommandBar
-                items={
-                  [{
-                    key: 'newItem',
-                    text: 'New',
-                    cacheKey: 'myCacheKey', // changing this key will invalidate this item's cache
-                    iconProps: { iconName: 'Add' },
-                    onClick: () => this.addFieldHandler(group.Name)
-                  },
-                  {
-                    key: 'delete',
-                    text: 'Delete',
-                    iconProps: { iconName: 'Delete' },
-                    disabled: true
-                  }] 
-                }
-                ariaLabel="Use left and right arrow keys to navigate between commands"
-              />
-              <DisplayFields fields={group} />
-            </>);
+            return (<DisplayGroups group={group} key={group.Name} addFieldHandler={this.addFieldHandler} removeFieldHandler={this.deleteField.bind(this)} />);
           })
         }
       </div>
@@ -381,7 +360,7 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
   }
 
   /*
-<div className={styles.container}>
+        <div className={styles.container}>
           <div className={styles.row}>
             <div className={styles.fieldTitle}>Field Title</div>
             <div className={styles.fieldType}>Field Type</div>
