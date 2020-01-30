@@ -8,6 +8,7 @@ export interface IGroup{
   Fields?: ISPField[];
   InternalName?: string;
   GroupId?: string;
+  Updated?: string;
   Ascending: boolean;
 }
   

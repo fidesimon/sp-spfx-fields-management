@@ -257,7 +257,7 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
     this.setState({ isCreateFieldPanelOpen: true, createFieldGroupName: groupName });
   }
 
-  closeFieldCreatePanel = (fieldData) => {
+  closeFieldCreatePanel = (fieldData: ISPField) => {
     let currentItems = this.state.ListOfGroups;
     fieldData.JustAdded = true;
     let isAsc = true;
@@ -267,17 +267,12 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
       this.setState({ isCreateFieldPanelOpen: false, ListOfGroups: currentItems });
     }
     else {
-      currentItems.forEach((item) => {
-        if (item.Name == fieldData.Group) {
-          item.Fields.push(fieldData as ISPField);
-          isAsc = item.Ascending;
-        }
-      });
-      this.setState({ isCreateFieldPanelOpen: false, ListOfGroups: currentItems });
+      let index = currentItems.findIndex(n=>n.Name == fieldData.Group);
+      currentItems[index].Fields = [...currentItems[index].Fields, fieldData];
+      isAsc = currentItems[index].Ascending;
       this.sortGroupFields(fieldData.Group, isAsc);
+      this.setState({ isCreateFieldPanelOpen: false, ListOfGroups: currentItems });
     }
-
-
   }
 
   closePanel = () => {
@@ -330,8 +325,9 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
           item.Fields = item.Fields.filter(n => n.Id != id);
         }
       });
-      this.setState({ ListOfGroups: currentItems });
+      return true;
     }
+    return false;
   }
 
   public render(): React.ReactElement<IFieldManagementProps> {

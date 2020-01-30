@@ -4,11 +4,13 @@ import { IColumn } from 'office-ui-fabric-react/lib/components/DetailsList/Detai
 import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
 import { IGroup } from '../Group';
 import { ISPField } from '../SPField';
+import { Icon, CommandBar } from 'office-ui-fabric-react';
 
 
 interface IDisplayFieldsProps {
     fields: IGroup;
     removeFieldHandler: Function;
+    addFieldHandler: Function;
 }
 
 const classNames = mergeStyleSets({
@@ -136,7 +138,7 @@ export default class DisplayFields extends React.Component<IDisplayFieldsProps, 
                 minWidth: 16,
                 maxWidth: 16,
                 onRender: (item: IDocument) => {
-                    return <span style={{color: item.removable == "T" ? "limegreen": "red"}} onClick={()=>{ this.props.removeFieldHandler(item.fieldId, item.group)}}>{item.removable}</span>
+                    return <Icon iconName="Delete" style={{ color: item.removable == "T" ? "#ff0000" : "#d8d8d8" }} onClick={() => { this.deleteItem(item.fieldId, item.group) }} />
                 }
             }
         ];
@@ -159,11 +161,41 @@ export default class DisplayFields extends React.Component<IDisplayFieldsProps, 
         };
     }
 
+    protected async deleteItem(fieldId: string, group: string) {
+        if (await this.props.removeFieldHandler(fieldId, group)) {
+            let items = this.state.items.filter(n => n.fieldId !== fieldId);
+            this.setState({ items: items });
+        } else {
+            alert("Failed to delete the item");
+        }
+    }
+
+    protected async addFieldHandler(groupName: string){
+        let data = await this.props.addFieldHandler(groupName);
+    }
 
     render() {
         const { columns, isCompactMode, items, selectionDetails, isModalSelection, announcedMessage } = this.state;
 
-        return (
+        return (<>
+            <CommandBar
+                items={
+                    [{
+                        key: 'newItem',
+                        text: 'New',
+                        cacheKey: 'myCacheKey', 
+                        iconProps: { iconName: 'Add' },
+                        onClick: () => { this.addFieldHandler(this.props.fields.Name) }
+                    },
+                    {
+                        key: 'delete',
+                        text: 'Delete',
+                        iconProps: { iconName: 'Delete' },
+                        disabled: true
+                    }]
+                }
+                ariaLabel="Use left and right arrow keys to navigate between commands"
+            />
             <DetailsList
                 items={items}
                 compact={false}
@@ -178,6 +210,7 @@ export default class DisplayFields extends React.Component<IDisplayFieldsProps, 
                 ariaLabelForSelectAllCheckbox="Toggle selection for all items"
                 checkButtonAriaLabel="Row checkbox"
             />
+        </>
         );
     }
 
@@ -262,7 +295,7 @@ function _generateDocuments(propItems: IGroup) {
             internalName: itanz[i].StaticName,
             typeDisplayName: itanz[i].TypeDisplayName,
             fieldId: itanz[i].Id,
-            removable: itanz[i].CanBeDeleted ? "T" : "F",
+            removable: itanz[i].CanBeDeleted ? (itanz[i].SchemaXml.indexOf("schemas.microsoft") === -1 ? "T" : "F") : "F",
             group: itanz[i].Group
         });
     }
