@@ -355,19 +355,6 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
     );
   }
 
-  /*
-        <div className={styles.container}>
-          <div className={styles.row}>
-            <div className={styles.fieldTitle}>Field Title</div>
-            <div className={styles.fieldType}>Field Type</div>
-          </div>
-          <GroupList groups={this.state.ListOfGroups}
-            addFieldHandler={this.addFieldHandler}
-            clickHandler={this.handleFieldClick}
-            deleteFieldHandler={this.deleteField.bind(this)} />
-        </div>
-  */
-
   protected groupBy = key => array =>
     array.reduce((objectsByKeyValue, obj) => {
       const value = obj[key];
