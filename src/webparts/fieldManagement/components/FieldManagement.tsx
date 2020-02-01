@@ -25,6 +25,7 @@ export interface IFieldManagementState {
   fieldsPlain: DataDetailedList;
   isCreateFieldPanelOpen: boolean;
   createFieldGroupName: string;
+  fieldCreationFunction: Function;
 }
 
 export class groupsDetailedList {
@@ -51,7 +52,7 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
   constructor(props) {
     super(props);
     //this.state = { ListOfGroups: [], createFieldGroupName: '', isPanelOpened: false, isCreateFieldPanelOpen: false, fieldToDisplay: null, fieldsPlain: this.magicWithGroups(this.mockData) };
-    this.state = { ListOfGroups: this.mockData, createFieldGroupName: '', isPanelOpened: false, isCreateFieldPanelOpen: false, fieldToDisplay: null, fieldsPlain: this.magicWithGroups(this.mockData) };
+    this.state = { ListOfGroups: this.mockData, createFieldGroupName: '', isPanelOpened: false, isCreateFieldPanelOpen: false, fieldToDisplay: null, fieldsPlain: this.magicWithGroups(this.mockData), fieldCreationFunction: null };
     this.deleteField.bind(this);
   }
 
@@ -252,9 +253,9 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
     this.setState({ isPanelOpened: true, fieldToDisplay: fieldData });
   }
 
-  addFieldHandler = (groupName: string) => {
+  addFieldHandler = (groupName: string, somefunction: Function) => {
     console.log({ groupName });
-    this.setState({ isCreateFieldPanelOpen: true, createFieldGroupName: groupName });
+    this.setState({ isCreateFieldPanelOpen: true, createFieldGroupName: groupName, fieldCreationFunction: somefunction });
   }
 
   closeFieldCreatePanel = (fieldData: ISPField) => {
@@ -271,6 +272,7 @@ export default class FieldManagement extends React.Component<IFieldManagementPro
       currentItems[index].Fields = [...currentItems[index].Fields, fieldData];
       isAsc = currentItems[index].Ascending;
       this.sortGroupFields(fieldData.Group, isAsc);
+      this.state.fieldCreationFunction(fieldData);
       this.setState({ isCreateFieldPanelOpen: false, ListOfGroups: currentItems });
     }
   }

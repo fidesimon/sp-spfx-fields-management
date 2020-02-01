@@ -55,7 +55,7 @@ export interface IDocument {
     internalName: string;
     typeDisplayName: string;
     fieldId: string;
-    removable: string;
+    removable: boolean;
     group: string;
 }
 
@@ -65,7 +65,8 @@ export default class DisplayFields extends React.Component<IDisplayFieldsProps, 
     private _allItems: IDocument[];
     constructor(props: IDisplayFieldsProps) {
         super(props);
-        this._allItems = _generateDocuments(this.props.fields);
+
+        this._allItems = _generateDocuments(this.props.fields.Fields);
 
         const columns: IColumn[] = [
             {
@@ -134,12 +135,13 @@ export default class DisplayFields extends React.Component<IDisplayFieldsProps, 
                 ariaLabel: 'Delete Item',
                 iconName: 'Delete',
                 isIconOnly: true,
+                data: 'boolean',
                 fieldName: 'removable',
                 minWidth: 16,
-                maxWidth: 16,
-                onRender: (item: IDocument) => {
-                    return <Icon iconName="Delete" style={{ color: item.removable == "T" ? "#ff0000" : "#d8d8d8" }} onClick={() => { this.deleteItem(item.fieldId, item.group) }} />
-                }
+                maxWidth: 16
+                // onRender: (item: IDocument) => {
+                //     return <><Icon iconName="Delete" style={{ color: item.removable ? "#ff0000" : "#d8d8d8" }} onClick={() => { this.deleteItem(item.fieldId, item.group) }} /></>;
+                // }
             }
         ];
 
@@ -170,8 +172,18 @@ export default class DisplayFields extends React.Component<IDisplayFieldsProps, 
         }
     }
 
-    protected async addFieldHandler(groupName: string){
-        let data = await this.props.addFieldHandler(groupName);
+    protected async addFieldHandler(groupName: string) {
+        let data = await this.props.addFieldHandler(groupName, this.somefunction.bind(this));
+    }
+
+    protected somefunction(field: ISPField) {
+        console.log("some function called.");
+        let newField = _generateDocuments([field]);
+        let fields = [...this.state.items, newField[0]];
+        let newItems = _copyAndSort(fields, "name");
+        let newItems2 = fields.sort((a: IDocument, b: IDocument) => (a.value > b.value) ? 1 : -1);
+        //items.slice(0).sort((a: T, b: T) => ((isSortedDescending ? a[key] < b[key] : a[key] > b[key]) ? 1 : -1));
+        this.setState({ items: newItems2 });
     }
 
     render() {
@@ -183,7 +195,7 @@ export default class DisplayFields extends React.Component<IDisplayFieldsProps, 
                     [{
                         key: 'newItem',
                         text: 'New',
-                        cacheKey: 'myCacheKey', 
+                        cacheKey: 'myCacheKey',
                         iconProps: { iconName: 'Add' },
                         onClick: () => { this.addFieldHandler(this.props.fields.Name) }
                     },
@@ -284,19 +296,18 @@ function _copyAndSort<T>(items: T[], columnKey: string, isSortedDescending?: boo
     return items.slice(0).sort((a: T, b: T) => ((isSortedDescending ? a[key] < b[key] : a[key] > b[key]) ? 1 : -1));
 }
 
-function _generateDocuments(propItems: IGroup) {
-    let itanz: ISPField[] = propItems.Fields;
+function _generateDocuments(propItems: ISPField[]) {
     const items: IDocument[] = [];
-    for (let i = 0; i < itanz.length; i++) {
+    for (let i = 0; i < propItems.length; i++) {
         items.push({
             key: i.toString(),
-            name: itanz[i].Title,
-            value: itanz[i].Title,
-            internalName: itanz[i].StaticName,
-            typeDisplayName: itanz[i].TypeDisplayName,
-            fieldId: itanz[i].Id,
-            removable: itanz[i].CanBeDeleted ? (itanz[i].SchemaXml.indexOf("schemas.microsoft") === -1 ? "T" : "F") : "F",
-            group: itanz[i].Group
+            name: propItems[i].Title,
+            value: propItems[i].Title,
+            internalName: propItems[i].StaticName,
+            typeDisplayName: propItems[i].TypeDisplayName,
+            fieldId: propItems[i].Id,
+            removable: propItems[i].CanBeDeleted ? (propItems[i].SchemaXml.indexOf("schemas.microsoft") === -1 ? true : false) : false,
+            group: propItems[i].Group
         });
     }
     return items;
